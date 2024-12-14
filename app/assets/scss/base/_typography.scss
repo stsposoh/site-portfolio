@@ -1,0 +1,17 @@
+@mixin font-heading1-regular {
+  /* Heading 1/Regular */
+  font-style: normal;
+  font-weight: 400;
+  font-size: 100px;
+  line-height: 105%;
+  /* identical to box height, or 105% */
+  font-feature-settings: 'ss12' on, 'ss08' on, 'ss14' on, 'ss15' on, 'ss18' on, 'ss19' on;
+
+}
+
+
+//h1, .h1 {
+//
+//  @include font-heading1-regular;
+//
+//}

@@ -1,0 +1,134 @@
+@use 'sass:math';
+@use "sass:map";
+@use "sass:string";
+@use "sass:list";
+
+// mixin for fonts
+$font-path: '/fonts/';
+
+@function str-replace($string, $search, $replace: "") {
+  $index: string.index($string, $search);
+
+  @if $index == null {
+    @return $string;
+  }
+
+  @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+}
+
+@mixin font-face($name, $path, $weight: normal, $style: normal, $exts: (woff2, woff, ttf, svg, eot)) {
+  $src: ();
+  $extmods: (
+          eot: "?",
+          svg: "#" + str-replace($name, " ", "_")
+  );
+  $formats: (
+          eot: "embedded-opentype",
+          woff: "woff",
+          woff2: "woff2",
+          ttf: "truetype",
+          svg: "svg"
+  );
+
+  @each $ext in $exts {
+    $extmod: if(map.has-key($extmods, $ext), $ext + map.get($extmods, $ext), $ext);
+    $format: if(map.has-key($formats, $ext), map.get($formats, $ext), $ext);
+    $src: list.append(
+                    $src,
+                    url("#{$font-path}#{$path}.#{$extmod}") format("#{$format}"),
+                    comma
+    );
+  }
+
+  @font-face {
+    font-family: string.quote($name);
+    font-style: $style;
+    font-weight: $weight;
+    src: $src;
+    font-display: swap;
+  }
+}
+
+//Example
+//@include font-face(poppins, fonts/poppins, 500, normal, (woff2));
+
+
+@mixin normalize-list() {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
+// mobile first (small query should be write first, then larger)
+$sm: 480;
+$md: 768;
+$lg: 1024;
+$xl: 1280;
+$xl2: 1440;
+$xl3: 1920;
+
+@mixin min-width($breakpoint) {
+  @if $breakpoint == sm {
+    @media only screen and (min-width: $sm) {
+      @content;
+    }
+  }
+  @if $breakpoint == md {
+    @media only screen and (min-width: $md) {
+      @content;
+    }
+  }
+  @if $breakpoint == lg {
+    @media only screen and (min-width: $lg) {
+      @content;
+    }
+  }
+  @if $breakpoint == xl {
+    @media only screen and (min-width: $xl) {
+      @content;
+    }
+  }
+  @if $breakpoint == 2xl {
+    @media only screen and (min-width: $xl2) {
+      @content;
+    }
+  }
+  @if $breakpoint == 3xl {
+    @media only screen and (min-width: $xl3) {
+      @content;
+    }
+  }
+}
+
+//@mixin custom-scrollbar {
+//  &::-webkit-scrollbar {
+//    width: 2px;
+//  }
+//
+//  &::-webkit-scrollbar-track {
+//    background: $color-gray-300;
+//    border-radius: 0;
+//  }
+//
+//  &::-webkit-scrollbar-thumb {
+//    background: $color-primary;
+//    border-radius: 0;
+//  }
+//}
+
+//aspect-ratio
+@mixin aspect-ratio($width, $height) {
+  aspect-ratio: math.div($width, $height);
+  @supports not (aspect-ratio: 1 / 1) {
+    &::before {
+      float: left;
+      padding-top: calc(100% * #{$height} / #{$width});
+      content: '';
+    }
+    &::after {
+      display: block;
+      content: '';
+      clear: both;
+    }
+  }
+}
