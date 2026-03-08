@@ -1,39 +1,35 @@
 <template>
   <div class="certificates">
-    <ul class="certificates__nav-list" role="tablist">
-      <li
+    <div class="certificates__nav-wrap" role="tablist">
+      <button
         v-for="(label, i) in tabLabels"
         :key="i"
+        type="button"
         class="certificates__nav-item"
         :class="{ '--active': activeTabIndex === i }"
         role="tab"
         :aria-selected="activeTabIndex === i"
         @click="activeTabIndex = i"
       >
-        {{ label }}
-      </li>
-    </ul>
-    <div class="certificates__cont" :style="containerStyle">
-      <div ref="wrapperRef" class="certificates__wrapper" :style="wrapperStyle">
-        <ul
-          v-for="(group, groupIndex) in tabLabels"
-          :key="groupIndex"
-          class="certificates__list"
+        <span class="certificates__nav-label">{{ label }}</span>
+        <span class="certificates__nav-count">{{ tabCounts[i] }}</span>
+      </button>
+    </div>
+    <div class="certificates__cont certificates__cont--card">
+      <ul class="certificates__list">
+        <li
+          v-for="cert in filteredByTab(activeTabIndex)"
+          :key="cert.id"
+          class="certificates__list-item"
         >
-          <li
-            v-for="(cert, certIndex) in filteredByTab(groupIndex)"
-            :key="cert.id"
-            class="certificates__list-item"
-          >
-            <Certificate
-              :thumb-src="cert.thumbSrc"
-              :full-src="cert.fullSrc"
-              :alt="cert.alt"
-              @click="openViewer(cert)"
-            />
-          </li>
-        </ul>
-      </div>
+          <Certificate
+            :thumb-src="cert.thumbSrc"
+            :full-src="cert.fullSrc"
+            :alt="cert.alt"
+            @click="openViewer(cert)"
+          />
+        </li>
+      </ul>
     </div>
 
     <ImageViewer
@@ -54,24 +50,124 @@ type Cert = {
   category: 'Курсы' | 'Тесты' | 'Разное'
 }
 
-const tabLabels = ['Показать все', 'Курсы', 'Тесты', 'Разное']
+const tabLabels = ['Показать все', 'Курсы', 'Тесты', 'Разное'] as const
+
+const tabCounts = computed(() => {
+  const all = certificates.value.length
+  const courses = certificates.value.filter(
+    (c) => c.category === 'Курсы'
+  ).length
+  const tests = certificates.value.filter((c) => c.category === 'Тесты').length
+  const other = certificates.value.filter((c) => c.category === 'Разное').length
+  return [all, courses, tests, other]
+})
 
 const certificates = ref<Cert[]>([
-  { id: 1, thumbSrc: '/images/certificates/small/1.jpg', fullSrc: '/images/certificates/big/1.jpg', alt: 'Сертификат 1', category: 'Курсы' },
-  { id: 2, thumbSrc: '/images/certificates/small/2.jpg', fullSrc: '/images/certificates/big/2.jpg', alt: 'Сертификат 2', category: 'Курсы' },
-  { id: 3, thumbSrc: '/images/certificates/small/3.jpg', fullSrc: '/images/certificates/big/3.jpg', alt: 'Сертификат 3', category: 'Тесты' },
-  { id: 4, thumbSrc: '/images/certificates/small/4.jpg', fullSrc: '/images/certificates/big/4.jpg', alt: 'Сертификат 4', category: 'Курсы' },
-  { id: 5, thumbSrc: '/images/certificates/small/5.jpg', fullSrc: '/images/certificates/big/5.jpg', alt: 'Сертификат 5', category: 'Разное' },
-  { id: 6, thumbSrc: '/images/certificates/small/6.jpg', fullSrc: '/images/certificates/big/6.jpg', alt: 'Сертификат 6', category: 'Курсы' },
-  { id: 7, thumbSrc: '/images/certificates/small/7.jpg', fullSrc: '/images/certificates/big/7.jpg', alt: 'Сертификат 7', category: 'Тесты' },
-  { id: 8, thumbSrc: '/images/certificates/small/8.jpg', fullSrc: '/images/certificates/big/8.jpg', alt: 'Сертификат 8', category: 'Курсы' },
-  { id: 9, thumbSrc: '/images/certificates/small/9.jpg', fullSrc: '/images/certificates/big/9.jpg', alt: 'Сертификат 9', category: 'Разное' },
-  { id: 10, thumbSrc: '/images/certificates/small/10.jpg', fullSrc: '/images/certificates/big/10.jpg', alt: 'Сертификат 10', category: 'Курсы' },
-  { id: 11, thumbSrc: '/images/certificates/small/11.jpg', fullSrc: '/images/certificates/big/11.jpg', alt: 'Сертификат 11', category: 'Тесты' },
-  { id: 12, thumbSrc: '/images/certificates/small/12.jpg', fullSrc: '/images/certificates/big/12.jpg', alt: 'Сертификат 12', category: 'Курсы' },
-  { id: 13, thumbSrc: '/images/certificates/small/13.jpg', fullSrc: '/images/certificates/big/13.jpg', alt: 'Сертификат 13', category: 'Разное' },
-  { id: 14, thumbSrc: '/images/certificates/small/14.jpg', fullSrc: '/images/certificates/big/14.jpg', alt: 'Сертификат 14', category: 'Курсы' },
-  { id: 15, thumbSrc: '/images/certificates/small/15.jpg', fullSrc: '/images/certificates/big/15.jpg', alt: 'Сертификат 15', category: 'Тесты' },
+  {
+    id: 1,
+    thumbSrc: '/images/certificates/small/1.jpg',
+    fullSrc: '/images/certificates/big/1.jpg',
+    alt: 'Сертификат 1',
+    category: 'Курсы'
+  },
+  {
+    id: 2,
+    thumbSrc: '/images/certificates/small/2.jpg',
+    fullSrc: '/images/certificates/big/2.jpg',
+    alt: 'Сертификат 2',
+    category: 'Курсы'
+  },
+  {
+    id: 3,
+    thumbSrc: '/images/certificates/small/3.jpg',
+    fullSrc: '/images/certificates/big/3.jpg',
+    alt: 'Сертификат 3',
+    category: 'Тесты'
+  },
+  {
+    id: 4,
+    thumbSrc: '/images/certificates/small/4.jpg',
+    fullSrc: '/images/certificates/big/4.jpg',
+    alt: 'Сертификат 4',
+    category: 'Курсы'
+  },
+  {
+    id: 5,
+    thumbSrc: '/images/certificates/small/5.jpg',
+    fullSrc: '/images/certificates/big/5.jpg',
+    alt: 'Сертификат 5',
+    category: 'Разное'
+  },
+  {
+    id: 6,
+    thumbSrc: '/images/certificates/small/6.jpg',
+    fullSrc: '/images/certificates/big/6.jpg',
+    alt: 'Сертификат 6',
+    category: 'Курсы'
+  },
+  {
+    id: 7,
+    thumbSrc: '/images/certificates/small/7.jpg',
+    fullSrc: '/images/certificates/big/7.jpg',
+    alt: 'Сертификат 7',
+    category: 'Тесты'
+  },
+  {
+    id: 8,
+    thumbSrc: '/images/certificates/small/8.jpg',
+    fullSrc: '/images/certificates/big/8.jpg',
+    alt: 'Сертификат 8',
+    category: 'Курсы'
+  },
+  {
+    id: 9,
+    thumbSrc: '/images/certificates/small/9.jpg',
+    fullSrc: '/images/certificates/big/9.jpg',
+    alt: 'Сертификат 9',
+    category: 'Разное'
+  },
+  {
+    id: 10,
+    thumbSrc: '/images/certificates/small/10.jpg',
+    fullSrc: '/images/certificates/big/10.jpg',
+    alt: 'Сертификат 10',
+    category: 'Курсы'
+  },
+  {
+    id: 11,
+    thumbSrc: '/images/certificates/small/11.jpg',
+    fullSrc: '/images/certificates/big/11.jpg',
+    alt: 'Сертификат 11',
+    category: 'Тесты'
+  },
+  {
+    id: 12,
+    thumbSrc: '/images/certificates/small/12.jpg',
+    fullSrc: '/images/certificates/big/12.jpg',
+    alt: 'Сертификат 12',
+    category: 'Курсы'
+  },
+  {
+    id: 13,
+    thumbSrc: '/images/certificates/small/13.jpg',
+    fullSrc: '/images/certificates/big/13.jpg',
+    alt: 'Сертификат 13',
+    category: 'Разное'
+  },
+  {
+    id: 14,
+    thumbSrc: '/images/certificates/small/14.jpg',
+    fullSrc: '/images/certificates/big/14.jpg',
+    alt: 'Сертификат 14',
+    category: 'Курсы'
+  },
+  {
+    id: 15,
+    thumbSrc: '/images/certificates/small/15.jpg',
+    fullSrc: '/images/certificates/big/15.jpg',
+    alt: 'Сертификат 15',
+    category: 'Тесты'
+  }
 ])
 
 const activeTabIndex = ref(0)
@@ -83,101 +179,105 @@ function filteredByTab(tabIndex: number): Cert[] {
   return certificates.value.filter((c) => c.category === category)
 }
 
-const containerHeight = ref(0)
-const wrapperRef = ref<HTMLElement | null>(null)
-
-const containerStyle = computed(() => ({
-  height: containerHeight.value ? `${containerHeight.value}px` : 'auto',
-}))
-
-const wrapperStyle = computed(() => ({
-  transform: `translate3d(-${100 * activeTabIndex.value}%, 0, 0)`,
-}))
-
-function setHeight() {
-  if (!wrapperRef.value) return
-  const panels = wrapperRef.value.querySelectorAll('.certificates__list')
-  const activePanel = panels[activeTabIndex.value]
-  containerHeight.value = activePanel ? activePanel.scrollHeight : 0
-}
-
 function openViewer(cert: Cert) {
   viewerCert.value = { fullSrc: cert.fullSrc, alt: cert.alt }
 }
-
-watch(activeTabIndex, () => {
-  nextTick(setHeight)
-})
-
-onMounted(() => {
-  nextTick(setHeight)
-  if (typeof window !== 'undefined') {
-    window.addEventListener('resize', setHeight)
-  }
-})
-
-onUnmounted(() => {
-  if (typeof window !== 'undefined') {
-    window.removeEventListener('resize', setHeight)
-  }
-})
 </script>
 
 <style lang="scss" scoped>
-$accent-color: #6f22b9;
+$accent: #ee2d29;
+$accent-light: #f8ae2c;
 
 .certificates {
-  &__nav-list {
+  &__nav-wrap {
     display: flex;
     flex-wrap: wrap;
-    gap: 0 1.25rem;
-    margin: 0 0 1.5rem;
-    padding: 0;
-    list-style: none;
+    gap: 0.8rem;
+    margin: 0 0 2rem;
+    padding: 0.4rem;
+    background: #f3f2f6;
+    border-radius: 1.2rem;
+    width: fit-content;
   }
 
   &__nav-item {
-    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.4rem;
+    font-size: 1.3rem;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    color: #888;
+    font-family: 'Poppins', sans-serif;
+    letter-spacing: 0.02em;
+    color: #666;
+    background: transparent;
+    border: none;
+    border-radius: 0.8rem;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     &:hover {
-      color: #555;
+      color: #333;
+      background: rgba(255, 255, 255, 0.8);
     }
 
     &.--active {
-      color: $accent-color;
+      color: #fff;
+      background: linear-gradient(135deg, $accent, $accent-light);
+      box-shadow: 0 0.2rem 0.8rem rgba(238, 45, 41, 0.35);
+
+      .certificates__nav-count {
+        background: rgba(255, 255, 255, 0.35);
+      }
     }
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 0.2rem solid $accent;
+      outline-offset: 0.2rem;
+    }
+  }
+
+  &__nav-label {
+    line-height: 1;
+  }
+
+  &__nav-count {
+    padding: 0.2rem 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 0.4rem;
   }
 
   &__cont {
     position: relative;
-    overflow: hidden;
-    transition: height 0.4s cubic-bezier(0.86, 0, 0.07, 1);
-  }
+    min-height: 20rem;
 
-  &__wrapper {
-    display: flex;
-    will-change: transform;
-    transition: transform 0.4s cubic-bezier(0.86, 0, 0.07, 1);
+    &--card {
+      padding: 1.5rem;
+      background: #f8f7fa;
+      border-radius: 1.2rem;
+      border-left: 0.4rem solid #ee2d29;
+      box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
+    }
   }
 
   &__list {
-    flex: 0 0 100%;
-    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
     margin: 0;
     padding: 0;
     list-style: none;
-    text-align: center;
   }
 
   &__list-item {
-    display: inline-block;
-    margin: 5px;
+    flex: 0 0 calc((100% - 4 * 1.5rem) / 5);
   }
 }
 </style>

@@ -41,26 +41,27 @@ defineEmits<{
 
 <style lang="scss" scoped>
 $accent: #6f22b9;
+$accent-coral: #de2d3e;
 $border: #e8e6ef;
 
 .portfolio-card {
-  width: 290px;
+  flex: 0 0 calc((100% - 3 * 1.5rem) / 4);
   margin: 0;
   background: #fff;
-  border: 1px solid $border;
-  border-radius: 12px;
+  border: 0.1rem solid $border;
+  border-radius: 1.2rem;
   overflow: hidden;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.2s;
 
   &:hover {
-    border-color: #d0cce0;
-    box-shadow: 0 4px 16px rgba(111, 34, 185, 0.08);
+    transform: translateY(-0.4rem);
+    box-shadow: 0 0.6rem 2rem rgba(0, 0, 0, 0.12);
   }
 }
 
 .portfolio-card__preview {
   position: relative;
-  height: 139px;
+  height: 13.9rem;
   background-size: cover;
   background-position: center;
   background-color: #f4f4f4;
@@ -76,37 +77,38 @@ $border: #e8e6ef;
 
 .portfolio-card__zoom {
   position: absolute;
-  bottom: 10px;
-  left: 12px;
+  bottom: 1rem;
+  left: 1.2rem;
   z-index: 1;
-  padding: 0.35rem 0.75rem;
-  font-size: 13px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1.3rem;
   font-weight: 700;
   font-family: inherit;
   color: #fff;
-  background: rgba(111, 34, 185, 0.9);
+  background: rgba(222, 45, 62, 0.9);
   border: none;
-  border-radius: 8px;
+  border-radius: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, transform 0.2s;
 
   &:hover {
-    background: $accent;
+    background: $accent-coral;
+    transform: scale(1.03);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(111, 34, 185, 0.4);
+    box-shadow: 0 0 0 0.2rem rgba(222, 45, 62, 0.4);
   }
 }
 
 .portfolio-card__body {
-  padding: 12px 14px 16px;
+  padding: 1.2rem 1.4rem 1.6rem;
 }
 
 .portfolio-card__title {
   margin: 0 0 0.35em;
-  font-size: 15px;
+  font-size: 1.5rem;
   font-weight: 700;
   font-family: 'Poppins', sans-serif;
   color: #1a1a1a;
@@ -116,20 +118,21 @@ $border: #e8e6ef;
 
 .portfolio-card__desc {
   margin: 0 0 0.75rem;
-  font-size: 14px;
+  font-size: 1.4rem;
   line-height: 1.4;
   color: #555;
 }
 
 .portfolio-card__link {
-  font-size: 13px;
+  font-size: 1.3rem;
   font-weight: 600;
-  color: $accent;
+  color: $accent-coral;
   text-decoration: none;
-  border-bottom: 1px solid currentColor;
+  border-bottom: 0.1rem solid currentColor;
+  transition: color 0.2s;
 
   &:hover {
-    color: #3a3d98;
+    color: #b83c85;
   }
 }
 </style>

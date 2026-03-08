@@ -103,6 +103,7 @@
 
 <style lang="scss" scoped>
 $accent: #6f22b9;
+$accent-mint: #07d89d;
 $border: #e8e6ef;
 
 .contacts {
@@ -110,7 +111,7 @@ $border: #e8e6ef;
   gap: 2rem;
   font-family: 'Poppins', sans-serif;
 
-  @media (min-width: 640px) {
+  @media (min-width: 64rem) {
     grid-template-columns: 1fr 1fr;
     align-items: start;
   }
@@ -123,7 +124,7 @@ $border: #e8e6ef;
     gap: 0.75rem;
     margin: 0 0 1rem;
     padding: 0;
-    font-size: 15px;
+    font-size: 1.5rem;
     line-height: 1.4;
     color: #333;
 
@@ -137,26 +138,26 @@ $border: #e8e6ef;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    color: $accent;
+    width: 3.2rem;
+    height: 3.2rem;
 
     img {
-      width: 20px;
-      height: 20px;
+      width: 2rem;
+      height: 2rem;
       object-fit: contain;
+      filter: brightness(0) saturate(100%);
     }
   }
 
   a {
     color: inherit;
     text-decoration: none;
-    border-bottom: 1px solid transparent;
+    border-bottom: 0.1rem solid transparent;
     transition: color 0.2s, border-color 0.2s;
 
     &:hover {
-      color: $accent;
-      border-bottom-color: $accent;
+      color: $accent-mint;
+      border-bottom-color: $accent-mint;
     }
   }
 }
@@ -171,34 +172,30 @@ $border: #e8e6ef;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 4rem;
+  height: 4rem;
   background: #f0eef5;
-  border: 1px solid $border;
-  border-radius: 10px;
+  border: 0.1rem solid $border;
+  border-radius: 1rem;
   color: #333;
   transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 
   &:hover {
-    background: #e8e4f0;
-    border-color: rgba(111, 34, 185, 0.35);
-    box-shadow: 0 2px 8px rgba(111, 34, 185, 0.12);
+    background: #e8f5f1;
+    border-color: rgba(7, 216, 157, 0.35);
+    box-shadow: 0 0.2rem 0.8rem rgba(7, 216, 157, 0.12);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(111, 34, 185, 0.3);
+    box-shadow: 0 0 0 0.2rem rgba(7, 216, 157, 0.3);
   }
 
   img {
-    width: 24px;
-    height: 24px;
+    width: 2.4rem;
+    height: 2.4rem;
     object-fit: contain;
     filter: brightness(0) saturate(100%);
-  }
-
-  &:hover img {
-    filter: brightness(0) saturate(100%) invert(25%) sepia(60%) saturate(3000%) hue-rotate(250deg);
   }
 }
 
@@ -219,21 +216,21 @@ $border: #e8e6ef;
 }
 
 .contacts__label-text {
-  font-size: 13px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: #555;
 }
 
 .contacts__input {
   width: 100%;
-  min-height: 44px;
-  padding: 0.6rem 0.85rem;
-  font-size: 15px;
+  min-height: 4.4rem;
+  padding: 1rem 1.4rem;
+  font-size: 1.6rem;
   font-family: inherit;
   color: #1a1a1a;
   background: #fff;
-  border: 1px solid $border;
-  border-radius: 10px;
+  border: 0.1rem solid $border;
+  border-radius: 1rem;
   transition: border-color 0.2s, box-shadow 0.2s;
 
   &::placeholder {
@@ -242,37 +239,37 @@ $border: #e8e6ef;
 
   &:focus {
     outline: none;
-    border-color: $accent;
-    box-shadow: 0 0 0 3px rgba(111, 34, 185, 0.12);
+    border-color: $accent-mint;
+    box-shadow: 0 0 0 0.3rem rgba(7, 216, 157, 0.15);
   }
 }
 
 .contacts__textarea {
-  min-height: 120px;
+  min-height: 12rem;
   resize: vertical;
 }
 
 .contacts__submit {
-  min-height: 44px;
-  padding: 0.65rem 1.25rem;
-  font-size: 15px;
+  min-height: 4.4rem;
+  padding: 1rem 2rem;
+  font-size: 1.6rem;
   font-weight: 700;
   font-family: inherit;
   color: #fff;
   background: linear-gradient(135deg, #07d89d, #1d6449);
   border: none;
-  border-radius: 10px;
+  border-radius: 1rem;
   cursor: pointer;
   transition: filter 0.2s, box-shadow 0.2s;
 
   &:hover {
     filter: brightness(1.05);
-    box-shadow: 0 4px 12px rgba(7, 216, 157, 0.35);
+    box-shadow: 0 0.4rem 1.2rem rgba(7, 216, 157, 0.35);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(7, 216, 157, 0.4);
+    box-shadow: 0 0 0 0.3rem rgba(7, 216, 157, 0.4);
   }
 }
 </style>

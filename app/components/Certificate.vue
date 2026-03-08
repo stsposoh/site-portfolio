@@ -34,25 +34,25 @@ defineEmits<{
   background: none;
   cursor: pointer;
   font-size: 0;
-  border-radius: 8px;
+  border-radius: 0.8rem;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-0.2rem);
+    box-shadow: 0 0.8rem 2.4rem rgba(0, 0, 0, 0.15);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px #6f22b9;
+    box-shadow: 0 0 0 0.2rem #6f22b9;
   }
 
   &__img {
     display: block;
-    width: 200px;
+    width: 100%;
     height: auto;
-    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0.2rem 0.2rem 1rem rgba(0, 0, 0, 0.15);
   }
 }
 </style>

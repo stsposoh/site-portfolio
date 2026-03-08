@@ -69,7 +69,7 @@ watch(() => props.hidden, (newVal) => {
 .main-menu {
   position: relative;
   z-index: 11;
-  font-size: 4vw;
+  font-size: clamp(3rem, 5vw, 6.4rem);
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 
   &--hidden {
@@ -79,8 +79,8 @@ watch(() => props.hidden, (newVal) => {
 
   &__item {
     opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+    transform: translateY(2rem);
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
     &--visible {
@@ -146,14 +146,16 @@ watch(() => props.hidden, (newVal) => {
 
     &.--decorated {
       &:before {
-        height: 25px;
-        transition: height 0.8s cubic-bezier(0.2,1,0.3,1), transform 0.8s cubic-bezier(0.2,1,0.3,1);
-        transform: scale3d(1,1,1);
+        height: 2.5rem;
+        transition: height 0.8s cubic-bezier(0.2, 1, 0.3, 1),
+                    transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        transform: scale3d(1, 1, 1);
       }
 
       &:hover {
         &:before {
-          transform: scale3d(1.2,1,1);
+          transform: scale3d(1.2, 1, 1);
+          height: 2.8rem;
         }
       }
     }

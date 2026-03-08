@@ -1,5 +1,5 @@
 <template>
-  <li class="technologia">
+  <li class="technologia" :class="{ 'technologia--main': isMain }" :style="animationStyle">
     <div class="technologia__item-back">
       <img :src="src" :alt="title" loading="lazy" />
     </div>
@@ -10,14 +10,23 @@
 </template>
 
 <script lang="ts" setup>
-defineProps<{
-  src: string
-  title: string
-}>()
+const props = withDefaults(
+  defineProps<{
+    src: string
+    title: string
+    isMain?: boolean
+    animationDelay?: number
+  }>(),
+  { animationDelay: 0 }
+)
+
+const animationStyle = computed(() => ({
+  animationDelay: `${props.animationDelay}ms`
+}))
 </script>
 
 <style lang="scss" scoped>
-$size: 80px;
+$size: 8rem;
 $border-color: #e0dde8;
 $accent-color: #6f22b9;
 
@@ -25,10 +34,22 @@ $accent-color: #6f22b9;
   position: relative;
   height: $size;
   width: $size;
-  margin: 8px;
-  border: 1px solid $border-color;
+  margin: 0.8rem;
+  border: 0.1rem solid $border-color;
   border-radius: 50%;
   transform-style: preserve-3d;
+  opacity: 0;
+  animation: technologiaFadeIn 0.4s ease forwards;
+
+  &--main {
+    border-color: rgba(111, 34, 185, 0.4);
+    box-shadow: 0 0 0 0.15rem rgba(111, 34, 185, 0.15);
+
+    .technologia__item-front-text {
+      color: #6f22b9;
+      font-weight: 700;
+    }
+  }
 
   &:hover {
     .technologia__item-back {
@@ -55,7 +76,7 @@ $accent-color: #6f22b9;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 15px;
+    padding: 1.5rem;
   }
 
   &__item-front {
@@ -66,7 +87,7 @@ $accent-color: #6f22b9;
 
     &-text {
       margin: 0;
-      font-size: 14px;
+      font-size: 1.4rem;
       line-height: 1.2;
       color: $accent-color;
       font-weight: 600;
@@ -81,6 +102,14 @@ $accent-color: #6f22b9;
     height: auto;
     vertical-align: middle;
     object-fit: contain;
+  }
+}
+</style>
+
+<style lang="scss">
+@keyframes technologiaFadeIn {
+  to {
+    opacity: 1;
   }
 }
 </style>

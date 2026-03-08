@@ -71,8 +71,8 @@ function openViewer(item: PortfolioItem) {
   &__list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
-    gap: 1.5rem 1rem;
+    justify-content: flex-start;
+    gap: 1.5rem;
     margin: 0;
     padding: 0;
     list-style: none;

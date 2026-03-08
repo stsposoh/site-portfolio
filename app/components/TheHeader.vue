@@ -61,10 +61,10 @@ onMounted(() => {
   top: 0;
 
   &__inner {
-    max-width: 1100px;
+    max-width: 110rem;
     width: 100%;
     margin: auto;
-    padding: 20px 16px;
+    padding: 2rem 1.6rem;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -72,13 +72,13 @@ onMounted(() => {
   }
 
   &__title {
-    font-weight: 300;
-    font-size: 23px;
-    margin: 0 15px 0 0;
+    font-weight: 500;
+    font-size: 2.4rem;
+    margin: 0 1.5rem 0 0;
   }
 
   &__text {
-    font-size: 14px;
+    font-size: 1.4rem;
     font-weight: 100;
   }
 

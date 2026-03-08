@@ -119,7 +119,7 @@ onUnmounted(() => {
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.5);
     }
   }
 
@@ -143,8 +143,8 @@ onUnmounted(() => {
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+    border-radius: 0.8rem;
+    box-shadow: 0 2.4rem 4.8rem rgba(0, 0, 0, 0.4);
 
     &.--full-height {
       max-height: none;
