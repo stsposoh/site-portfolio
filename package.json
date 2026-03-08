@@ -12,11 +12,9 @@
   },
   "dependencies": {
     "animejs": "^3.2.2",
-    "normalize.css": "^8.0.1",
+    "modern-normalize": "^3.0.1",
     "nuxt": "^3.14.1592",
-    "split-type": "^0.3.4",
-    "vue": "latest",
-    "vue-router": "latest"
+    "split-type": "^0.3.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.16.0",
