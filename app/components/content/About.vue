@@ -59,27 +59,7 @@
 </template>
 
 <script lang="ts" setup>
-import { formatYears, formatMonths } from '~/utils/pluralize'
-
-const calculateExperience = (): string => {
-  const startDate = new Date(2016, 0, 1)
-  const now = new Date()
-
-  let years = now.getFullYear() - startDate.getFullYear()
-  let months = now.getMonth() - startDate.getMonth()
-
-  if (months < 0) {
-    years--
-    months += 12
-  }
-
-  const yearsText = formatYears(years)
-  const monthsText = formatMonths(months)
-
-  return `${yearsText}${monthsText}`
-}
-
-const experienceText = computed(() => calculateExperience())
+const { experienceText } = useExperience()
 </script>
 
 <style lang="scss" scoped>
@@ -87,110 +67,109 @@ const experienceText = computed(() => calculateExperience())
   display: flex;
   gap: 2rem;
   align-items: flex-start;
-  font-family: 'Poppins', sans-serif;
 
-  @media (max-width: 77rem) {
+  @include m.max-width(xl) {
     flex-direction: column;
     align-items: center;
   }
-}
 
-.about-content__photo {
-  flex-shrink: 0;
-  width: 18rem;
+  &__photo {
+    flex-shrink: 0;
+    width: 18rem;
 
-  @media (max-width: 77rem) {
-    width: 15rem;
+    @include m.max-width(xl) {
+      width: 15rem;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 1.6rem;
+      object-fit: cover;
+      border: 0.2rem solid rgba(111, 34, 185, 0.25);
+      box-shadow:
+        0 0.8rem 2.4rem rgba(111, 34, 185, 0.15),
+        0 0.4rem 1.2rem rgba(0, 0, 0, 0.08);
+      transition: box-shadow 0.3s ease;
+    }
+
+    &:hover img {
+      box-shadow:
+        0 1rem 3rem rgba(111, 34, 185, 0.2),
+        0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+    }
   }
 
-  img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-radius: 1.6rem;
-    object-fit: cover;
-    border: 0.2rem solid rgba(111, 34, 185, 0.25);
-    box-shadow:
-      0 0.8rem 2.4rem rgba(111, 34, 185, 0.15),
-      0 0.4rem 1.2rem rgba(0, 0, 0, 0.08);
-    transition: box-shadow 0.3s ease;
+  &__experience {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    margin: 0 0.2rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #6f22b9, #3a3d98);
+    border-radius: 0.6rem;
+    white-space: nowrap;
   }
 
-  &:hover img {
-    box-shadow:
-      0 1rem 3rem rgba(111, 34, 185, 0.2),
-      0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  &__tech-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0 0 1.5rem !important;
   }
-}
 
-.about-content__experience {
-  display: inline-block;
-  padding: 0.3rem 0.8rem;
-  margin: 0 0.2rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #6f22b9, #3a3d98);
-  border-radius: 0.6rem;
-  white-space: nowrap;
-}
+  &__tech-pill {
+    display: inline-block;
+    padding: 0.35rem 1rem;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: v.$color-primary;
+    background: rgba(111, 34, 185, 0.08);
+    border: 0.1rem solid rgba(111, 34, 185, 0.2);
+    border-radius: 0.6rem;
+  }
 
-.about-content__tech-wrap {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem;
-  margin: 0 0 1.5rem !important;
-}
+  &__text {
+    flex: 1;
+    min-width: 0;
+  }
 
-.about-content__tech-pill {
-  display: inline-block;
-  padding: 0.35rem 1rem;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #6f22b9;
-  background: rgba(111, 34, 185, 0.08);
-  border: 0.1rem solid rgba(111, 34, 185, 0.2);
-  border-radius: 0.6rem;
-}
+  &__education {
+    margin-top: 2rem;
+  }
 
-.about-content__text {
-  flex: 1;
-  min-width: 0;
-}
+  &__education-title {
+    margin: 0 0 1.2rem;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a1a;
+  }
 
-.about-content__education {
-  margin-top: 2rem;
-}
+  &__education-body {
+    padding: 1.5rem 1.8rem;
+    background: #f8f7fa;
+    border-radius: 1.2rem;
+    border-left: 0.4rem solid v.$color-primary;
+    box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
+  }
 
-.about-content__education-title {
-  margin: 0 0 1.2rem;
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: #1a1a1a;
-}
+  &__education-uni {
+    margin: 0 0 0.4rem;
+  }
 
-.about-content__education-body {
-  padding: 1.5rem 1.8rem;
-  background: #f8f7fa;
-  border-radius: 1.2rem;
-  border-left: 0.4rem solid #6f22b9;
-  box-shadow: 0 0.2rem 0.8rem rgba(0, 0, 0, 0.04);
-}
+  &__education-meta {
+    margin: 0 0 0.8rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: v.$color-primary;
+  }
 
-.about-content__education-uni {
-  margin: 0 0 0.4rem;
-}
-
-.about-content__education-meta {
-  margin: 0 0 0.8rem;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #6f22b9;
-}
-
-.about-content__education p {
-  margin: 0 0 0.5rem;
-  font-size: 1.4rem;
-  color: #444;
+  &__education p {
+    margin: 0 0 0.5rem;
+    font-size: 1.4rem;
+    color: #444;
+  }
 }
 </style>

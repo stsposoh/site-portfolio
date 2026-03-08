@@ -42,141 +42,27 @@
 </template>
 
 <script lang="ts" setup>
-type Cert = {
-  id: number
-  thumbSrc: string
-  fullSrc: string
-  alt: string
-  category: 'Курсы' | 'Тесты' | 'Разное'
-}
+import type { Cert } from '~/types'
+import { certificatesData } from '~/data/certificates'
 
 const tabLabels = ['Показать все', 'Курсы', 'Тесты', 'Разное'] as const
 
-const tabCounts = computed(() => {
-  const all = certificates.value.length
-  const courses = certificates.value.filter(
-    (c) => c.category === 'Курсы'
-  ).length
-  const tests = certificates.value.filter((c) => c.category === 'Тесты').length
-  const other = certificates.value.filter((c) => c.category === 'Разное').length
-  return [all, courses, tests, other]
-})
-
-const certificates = ref<Cert[]>([
-  {
-    id: 1,
-    thumbSrc: '/images/certificates/small/1.jpg',
-    fullSrc: '/images/certificates/big/1.jpg',
-    alt: 'Сертификат 1',
-    category: 'Курсы'
-  },
-  {
-    id: 2,
-    thumbSrc: '/images/certificates/small/2.jpg',
-    fullSrc: '/images/certificates/big/2.jpg',
-    alt: 'Сертификат 2',
-    category: 'Курсы'
-  },
-  {
-    id: 3,
-    thumbSrc: '/images/certificates/small/3.jpg',
-    fullSrc: '/images/certificates/big/3.jpg',
-    alt: 'Сертификат 3',
-    category: 'Тесты'
-  },
-  {
-    id: 4,
-    thumbSrc: '/images/certificates/small/4.jpg',
-    fullSrc: '/images/certificates/big/4.jpg',
-    alt: 'Сертификат 4',
-    category: 'Курсы'
-  },
-  {
-    id: 5,
-    thumbSrc: '/images/certificates/small/5.jpg',
-    fullSrc: '/images/certificates/big/5.jpg',
-    alt: 'Сертификат 5',
-    category: 'Разное'
-  },
-  {
-    id: 6,
-    thumbSrc: '/images/certificates/small/6.jpg',
-    fullSrc: '/images/certificates/big/6.jpg',
-    alt: 'Сертификат 6',
-    category: 'Курсы'
-  },
-  {
-    id: 7,
-    thumbSrc: '/images/certificates/small/7.jpg',
-    fullSrc: '/images/certificates/big/7.jpg',
-    alt: 'Сертификат 7',
-    category: 'Тесты'
-  },
-  {
-    id: 8,
-    thumbSrc: '/images/certificates/small/8.jpg',
-    fullSrc: '/images/certificates/big/8.jpg',
-    alt: 'Сертификат 8',
-    category: 'Курсы'
-  },
-  {
-    id: 9,
-    thumbSrc: '/images/certificates/small/9.jpg',
-    fullSrc: '/images/certificates/big/9.jpg',
-    alt: 'Сертификат 9',
-    category: 'Разное'
-  },
-  {
-    id: 10,
-    thumbSrc: '/images/certificates/small/10.jpg',
-    fullSrc: '/images/certificates/big/10.jpg',
-    alt: 'Сертификат 10',
-    category: 'Курсы'
-  },
-  {
-    id: 11,
-    thumbSrc: '/images/certificates/small/11.jpg',
-    fullSrc: '/images/certificates/big/11.jpg',
-    alt: 'Сертификат 11',
-    category: 'Тесты'
-  },
-  {
-    id: 12,
-    thumbSrc: '/images/certificates/small/12.jpg',
-    fullSrc: '/images/certificates/big/12.jpg',
-    alt: 'Сертификат 12',
-    category: 'Курсы'
-  },
-  {
-    id: 13,
-    thumbSrc: '/images/certificates/small/13.jpg',
-    fullSrc: '/images/certificates/big/13.jpg',
-    alt: 'Сертификат 13',
-    category: 'Разное'
-  },
-  {
-    id: 14,
-    thumbSrc: '/images/certificates/small/14.jpg',
-    fullSrc: '/images/certificates/big/14.jpg',
-    alt: 'Сертификат 14',
-    category: 'Курсы'
-  },
-  {
-    id: 15,
-    thumbSrc: '/images/certificates/small/15.jpg',
-    fullSrc: '/images/certificates/big/15.jpg',
-    alt: 'Сертификат 15',
-    category: 'Тесты'
-  }
-])
-
+const certificates = certificatesData
 const activeTabIndex = ref(0)
 const viewerCert = ref<Pick<Cert, 'fullSrc' | 'alt'> | null>(null)
 
+const tabCounts = computed(() => {
+  const all = certificates.length
+  const courses = certificates.filter((c) => c.category === 'Курсы').length
+  const tests = certificates.filter((c) => c.category === 'Тесты').length
+  const other = certificates.filter((c) => c.category === 'Разное').length
+  return [all, courses, tests, other]
+})
+
 function filteredByTab(tabIndex: number): Cert[] {
-  if (tabIndex === 0) return certificates.value
+  if (tabIndex === 0) return certificates
   const category = tabLabels[tabIndex]
-  return certificates.value.filter((c) => c.category === category)
+  return certificates.filter((c) => c.category === category)
 }
 
 function openViewer(cert: Cert) {
@@ -207,7 +93,6 @@ $accent-light: #f8ae2c;
     padding: 0.8rem 1.4rem;
     font-size: 1.3rem;
     font-weight: 600;
-    font-family: 'Poppins', sans-serif;
     letter-spacing: 0.02em;
     color: #666;
     background: transparent;

@@ -1,53 +1,46 @@
-<script setup lang="ts">
-import SplitType from 'split-type';
-import anime from 'animejs';
+<script lang="ts" setup>
+import SplitType from 'split-type'
+import anime from 'animejs'
 
-const isPageLoaded = ref<boolean>(false);
+const isPageLoaded = ref<boolean>(false)
 
 onMounted(() => {
-  new SplitType('.header__title', { types: 'chars' });
-  new SplitType('.header__text', { types: 'chars' });
+  new SplitType('.header__title', { types: 'chars' })
+  new SplitType('.header__text', { types: 'chars' })
 
-  isPageLoaded.value = true;
+  isPageLoaded.value = true
 
   const tl = anime.timeline({
-    easing: 'easeOutExpo',
-  });
+    easing: 'easeOutExpo'
+  })
 
-  tl
-    .add({
-      targets: '.header__title .char',
-      opacity: [0, 1],
-      rotateY: [90, 0],
-      easing: 'easeOutQuad',
-      delay: anime.stagger(100),
-      duration: 400
-    })
-    .add({
+  tl.add({
+    targets: '.header__title .char',
+    opacity: [0, 1],
+    rotateY: [90, 0],
+    easing: 'easeOutQuad',
+    delay: anime.stagger(100),
+    duration: 400
+  }).add(
+    {
       targets: '.header__text .char',
       opacity: [0, 1],
       rotateY: [90, 0],
       easing: 'easeOutQuad',
       delay: anime.stagger(60),
       duration: 200
-    }, '-=400')
-});
+    },
+    '-=400'
+  )
+})
 </script>
 
 <template>
   <header class="header">
-    <div
-      v-show="isPageLoaded"
-      class="header__inner">
-      <h1
-        ref="headerRef"
-        class="header__title">
-        Stan Posokhov
-      </h1>
+    <div v-show="isPageLoaded" class="header__inner">
+      <h1 class="header__title">Stan Posokhov</h1>
 
-      <div class="header__text">
-        frontend developer
-      </div>
+      <div class="header__text">frontend developer</div>
     </div>
   </header>
 </template>
@@ -72,14 +65,14 @@ onMounted(() => {
   }
 
   &__title {
-    font-weight: 500;
+    font-weight: 600;
     font-size: 2.4rem;
     margin: 0 1.5rem 0 0;
   }
 
   &__text {
     font-size: 1.4rem;
-    font-weight: 100;
+    font-weight: 400;
   }
 
   &__title,

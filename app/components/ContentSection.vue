@@ -79,7 +79,6 @@ defineEmits<{
     font-size: 1.5rem;
     border-radius: 100rem;
     font-weight: 700;
-    font-family: inherit;
     letter-spacing: 0.02em;
     color: #fff;
     border: none;
@@ -223,8 +222,7 @@ defineEmits<{
   &__title {
     margin: 0 0 0.35em;
     font-size: clamp(2.6rem, 4vw, 3.6rem);
-    font-weight: 800;
-    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
     color: #1a1a1a;
     letter-spacing: -0.02em;
   }
@@ -232,8 +230,7 @@ defineEmits<{
   &__subtitle {
     margin: 0 0 1.5rem;
     font-size: clamp(1.5rem, 2vw, 1.7rem);
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
     color: #555;
     line-height: 1.4;
   }
@@ -241,7 +238,6 @@ defineEmits<{
   &__body {
     font-size: 1.5rem;
     line-height: 1.65;
-    font-family: 'Poppins', sans-serif;
     color: #333;
 
     :deep(p) {

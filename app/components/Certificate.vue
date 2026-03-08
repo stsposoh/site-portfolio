@@ -1,15 +1,6 @@
 <template>
-  <button
-    type="button"
-    class="certificate"
-    @click="$emit('click')"
-  >
-    <img
-      class="certificate__img"
-      :src="thumbSrc"
-      :alt="alt"
-      loading="lazy"
-    />
+  <button type="button" class="certificate" @click="$emit('click')">
+    <img class="certificate__img" :src="thumbSrc" :alt="alt" loading="lazy" />
   </button>
 </template>
 
@@ -36,7 +27,9 @@ defineEmits<{
   font-size: 0;
   border-radius: 0.8rem;
   overflow: hidden;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-0.2rem);

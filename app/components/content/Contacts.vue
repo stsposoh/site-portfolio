@@ -15,7 +15,12 @@
       </p>
       <p class="contacts__row">
         <span class="contacts__icon" aria-hidden="true">
-          <img src="/icons/contacts/gmail_mail.svg" alt="" width="20" height="20" />
+          <img
+            src="/icons/contacts/gmail_mail.svg"
+            alt=""
+            width="20"
+            height="20"
+          />
         </span>
         <a href="mailto:stsposoh@gmail.com">stsposoh@gmail.com</a>
       </p>
@@ -27,9 +32,16 @@
       </p>
       <p class="contacts__row">
         <span class="contacts__icon" aria-hidden="true">
-          <img src="/icons/contacts/telegram.svg" alt="" width="20" height="20" />
+          <img
+            src="/icons/contacts/telegram.svg"
+            alt=""
+            width="20"
+            height="20"
+          />
         </span>
-        <a href="https://t.me/posohov" target="_blank" rel="noopener noreferrer">@posohov</a>
+        <a href="https://t.me/posohov" target="_blank" rel="noopener noreferrer"
+          >@posohov</a
+        >
       </p>
 
       <div class="contacts__social">
@@ -40,7 +52,12 @@
           rel="noopener noreferrer"
           title="GitHub"
         >
-          <img src="/icons/contacts/GitHub%20circle.svg" alt="GitHub" width="24" height="24" />
+          <img
+            src="/icons/contacts/GitHub%20circle.svg"
+            alt="GitHub"
+            width="24"
+            height="24"
+          />
         </a>
         <a
           class="contacts__social-link"
@@ -49,7 +66,12 @@
           rel="noopener noreferrer"
           title="LinkedIn"
         >
-          <img src="/icons/contacts/Linked%20in.svg" alt="LinkedIn" width="24" height="24" />
+          <img
+            src="/icons/contacts/Linked%20in.svg"
+            alt="LinkedIn"
+            width="24"
+            height="24"
+          />
         </a>
       </div>
     </div>
@@ -91,34 +113,41 @@
             required
           />
         </label>
-        <button type="submit" class="contacts__submit">
-          Отправить
-        </button>
+        <button type="submit" class="contacts__submit">Отправить</button>
       </form>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup />
+<script lang="ts" setup>
+// Contacts section - static content, form submits to Formspree
+</script>
 
 <style lang="scss" scoped>
-$accent: #6f22b9;
-$accent-mint: #07d89d;
-$border: #e8e6ef;
-
 .contacts {
   display: grid;
   gap: 2rem;
-  font-family: 'Poppins', sans-serif;
 
-  @media (min-width: 64rem) {
+  @include m.min-width(lg) {
     grid-template-columns: 1fr 1fr;
     align-items: start;
   }
-}
 
-.contacts__info {
-  .contacts__row {
+  &__info {
+    a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 0.1rem solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+
+      &:hover {
+        color: v.$color-accent-mint;
+        border-bottom-color: v.$color-accent-mint;
+      }
+    }
+  }
+
+  &__row {
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -133,7 +162,7 @@ $border: #e8e6ef;
     }
   }
 
-  .contacts__icon {
+  &__icon {
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
@@ -149,127 +178,113 @@ $border: #e8e6ef;
     }
   }
 
-  a {
-    color: inherit;
-    text-decoration: none;
-    border-bottom: 0.1rem solid transparent;
-    transition: color 0.2s, border-color 0.2s;
+  &__social {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  &__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4rem;
+    height: 4rem;
+    background: #f0eef5;
+    border: 0.1rem solid v.$color-border;
+    border-radius: 1rem;
+    color: #333;
+    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
 
     &:hover {
-      color: $accent-mint;
-      border-bottom-color: $accent-mint;
+      background: #e8f5f1;
+      border-color: rgba(7, 216, 157, 0.35);
+      box-shadow: 0 0.2rem 0.8rem rgba(7, 216, 157, 0.12);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.2rem rgba(7, 216, 157, 0.3);
+    }
+
+    img {
+      width: 2.4rem;
+      height: 2.4rem;
+      object-fit: contain;
+      filter: brightness(0) saturate(100%);
     }
   }
-}
 
-.contacts__social {
-  display: flex;
-  gap: 0.75rem;
-  margin-top: 1.25rem;
-}
-
-.contacts__social-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 4rem;
-  height: 4rem;
-  background: #f0eef5;
-  border: 0.1rem solid $border;
-  border-radius: 1rem;
-  color: #333;
-  transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    background: #e8f5f1;
-    border-color: rgba(7, 216, 157, 0.35);
-    box-shadow: 0 0.2rem 0.8rem rgba(7, 216, 157, 0.12);
+  &__form-wrap {
+    min-width: 0;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(7, 216, 157, 0.3);
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 
-  img {
-    width: 2.4rem;
-    height: 2.4rem;
-    object-fit: contain;
-    filter: brightness(0) saturate(100%);
-  }
-}
-
-.contacts__form-wrap {
-  min-width: 0;
-}
-
-.contacts__form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.contacts__label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.contacts__label-text {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #555;
-}
-
-.contacts__input {
-  width: 100%;
-  min-height: 4.4rem;
-  padding: 1rem 1.4rem;
-  font-size: 1.6rem;
-  font-family: inherit;
-  color: #1a1a1a;
-  background: #fff;
-  border: 0.1rem solid $border;
-  border-radius: 1rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
-
-  &::placeholder {
-    color: #999;
+  &__label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
   }
 
-  &:focus {
-    outline: none;
-    border-color: $accent-mint;
-    box-shadow: 0 0 0 0.3rem rgba(7, 216, 157, 0.15);
-  }
-}
-
-.contacts__textarea {
-  min-height: 12rem;
-  resize: vertical;
-}
-
-.contacts__submit {
-  min-height: 4.4rem;
-  padding: 1rem 2rem;
-  font-size: 1.6rem;
-  font-weight: 700;
-  font-family: inherit;
-  color: #fff;
-  background: linear-gradient(135deg, #07d89d, #1d6449);
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-  transition: filter 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    filter: brightness(1.05);
-    box-shadow: 0 0.4rem 1.2rem rgba(7, 216, 157, 0.35);
+  &__label-text {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #555;
   }
 
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 0.3rem rgba(7, 216, 157, 0.4);
+  &__input {
+    width: 100%;
+    min-height: 4.4rem;
+    padding: 1rem 1.4rem;
+    font-size: 1.6rem;
+    color: #1a1a1a;
+    background: #fff;
+    border: 0.1rem solid v.$color-border;
+    border-radius: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: v.$color-accent-mint;
+      box-shadow: 0 0 0 0.3rem rgba(v.$color-accent-mint, 0.15);
+    }
+  }
+
+  &__textarea {
+    min-height: 12rem;
+    resize: vertical;
+  }
+
+  &__submit {
+    min-height: 4.4rem;
+    padding: 1rem 2rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #07d89d, #1d6449);
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    transition: filter 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      filter: brightness(1.05);
+      box-shadow: 0 0.4rem 1.2rem rgba(7, 216, 157, 0.35);
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 0.3rem rgba(v.$color-accent-mint, 0.4);
+    }
   }
 }
 </style>

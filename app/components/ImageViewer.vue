@@ -2,38 +2,48 @@
   <ClientOnly>
     <Teleport to="body">
       <Transition name="viewer">
-      <div
-        v-if="open"
-        class="image-viewer"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Просмотр изображения"
-        @click.self="close"
-      >
-        <button
-          type="button"
-          class="image-viewer__close"
-          aria-label="Закрыть"
-          @click="close"
+        <div
+          v-if="open"
+          class="image-viewer"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Просмотр изображения"
+          @click.self="close"
         >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M18 6L6 18M6 6l12 12" />
-          </svg>
-        </button>
-        <div class="image-viewer__content" :class="{ '--scrollable': props.scrollable }">
-          <img
-            v-if="src"
-            :src="src"
-            :alt="alt"
-            class="image-viewer__img"
-            :class="{ '--full-height': props.scrollable }"
-            @click.stop
-          />
+          <button
+            type="button"
+            class="image-viewer__close"
+            aria-label="Закрыть"
+            @click="close"
+          >
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+          <div
+            class="image-viewer__content"
+            :class="{ '--scrollable': props.scrollable }"
+          >
+            <img
+              v-if="src"
+              :src="src"
+              :alt="alt"
+              class="image-viewer__img"
+              :class="{ '--full-height': props.scrollable }"
+              @click.stop
+            />
+          </div>
         </div>
-      </div>
-    </Transition>
-  </Teleport>
-  <template #fallback />
+      </Transition>
+    </Teleport>
+    <template #fallback />
   </ClientOnly>
 </template>
 

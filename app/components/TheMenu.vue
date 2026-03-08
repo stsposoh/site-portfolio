@@ -1,66 +1,93 @@
-<script setup lang="ts">
-import { ref, watch } from 'vue';
-
+<script lang="ts" setup>
 const props = defineProps<{
-  hidden?: boolean;
-}>();
+  hidden?: boolean
+}>()
 
-const showDecoration = ref(false);
-const visibleItems = ref<number[]>([]);
+const showDecoration = ref(false)
+const visibleItems = ref<number[]>([])
 
-watch(() => props.hidden, (newVal) => {
-  if (!newVal) {
-    // Меню появляется - показываем пункты каскадом
-    visibleItems.value = [];
-    for (let i = 0; i < 5; i++) {
+watch(
+  () => props.hidden,
+  (newVal) => {
+    if (!newVal) {
+      // Меню появляется - показываем пункты каскадом
+      visibleItems.value = []
+      for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+          visibleItems.value.push(i)
+        }, i * 80)
+      }
+
+      // Добавляем декорацию после появления всех пунктов
       setTimeout(() => {
-        visibleItems.value.push(i);
-      }, i * 80);
+        showDecoration.value = true
+      }, 700)
+    } else {
+      // Меню скрывается - убираем всё
+      showDecoration.value = false
+      visibleItems.value = []
     }
-    
-    // Добавляем декорацию после появления всех пунктов
-    setTimeout(() => {
-      showDecoration.value = true;
-    }, 700);
-  } else {
-    // Меню скрывается - убираем всё
-    showDecoration.value = false;
-    visibleItems.value = [];
-  }
-}, { immediate: true });
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <nav class="main-menu" :class="{ 'main-menu--hidden': hidden }">
-    <div 
-      class="main-menu__item" 
+    <div
+      class="main-menu__item"
       :class="{ 'main-menu__item--visible': visibleItems.includes(0) }"
     >
-      <a href="#" class="main-menu__link" :class="{ '--decorated': showDecoration }">About me</a>
+      <a
+        href="#"
+        class="main-menu__link"
+        :class="{ '--decorated': showDecoration }"
+        >About me</a
+      >
     </div>
-    <div 
+    <div
       class="main-menu__item"
       :class="{ 'main-menu__item--visible': visibleItems.includes(1) }"
     >
-      <a href="#" class="main-menu__link" :class="{ '--decorated': showDecoration }">Skills</a>
+      <a
+        href="#"
+        class="main-menu__link"
+        :class="{ '--decorated': showDecoration }"
+        >Skills</a
+      >
     </div>
-    <div 
+    <div
       class="main-menu__item"
       :class="{ 'main-menu__item--visible': visibleItems.includes(2) }"
     >
-      <a href="#" class="main-menu__link" :class="{ '--decorated': showDecoration }">Certificates</a>
+      <a
+        href="#"
+        class="main-menu__link"
+        :class="{ '--decorated': showDecoration }"
+        >Certificates</a
+      >
     </div>
-    <div 
+    <div
       class="main-menu__item"
       :class="{ 'main-menu__item--visible': visibleItems.includes(3) }"
     >
-      <a href="#" class="main-menu__link" :class="{ '--decorated': showDecoration }">Portfolio</a>
+      <a
+        href="#"
+        class="main-menu__link"
+        :class="{ '--decorated': showDecoration }"
+        >Portfolio</a
+      >
     </div>
-    <div 
+    <div
       class="main-menu__item"
       :class="{ 'main-menu__item--visible': visibleItems.includes(4) }"
     >
-      <a href="#" class="main-menu__link" :class="{ '--decorated': showDecoration }">Contacts</a>
+      <a
+        href="#"
+        class="main-menu__link"
+        :class="{ '--decorated': showDecoration }"
+        >Contacts</a
+      >
     </div>
   </nav>
 </template>
@@ -80,8 +107,9 @@ watch(() => props.hidden, (newVal) => {
   &__item {
     opacity: 0;
     transform: translateY(2rem);
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 
     &--visible {
       opacity: 1;
@@ -135,20 +163,20 @@ watch(() => props.hidden, (newVal) => {
     line-height: 1.25;
     letter-spacing: -0.025em;
     text-indent: -0.025em;
-    font-family: 'Poppins', sans-serif;
     font-weight: 700;
     position: relative;
 
     &:hover,
     &:focus {
-      color: var(--color-menu-hover);
+      color: v.$color-menu-hover;
     }
 
     &.--decorated {
       &:before {
         height: 2.5rem;
-        transition: height 0.8s cubic-bezier(0.2, 1, 0.3, 1),
-                    transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        transition:
+          height 0.8s cubic-bezier(0.2, 1, 0.3, 1),
+          transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
         transform: scale3d(1, 1, 1);
       }
 
@@ -169,7 +197,7 @@ watch(() => props.hidden, (newVal) => {
       left: 0;
       bottom: 0;
       transform-origin: 0 0;
-      transform: scale3d(0,1,1);
+      transform: scale3d(0, 1, 1);
       z-index: -1;
     }
   }

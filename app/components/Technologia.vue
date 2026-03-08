@@ -1,5 +1,9 @@
 <template>
-  <li class="technologia" :class="{ 'technologia--main': isMain }" :style="animationStyle">
+  <li
+    class="technologia"
+    :class="{ 'technologia--main': isMain }"
+    :style="animationStyle"
+  >
     <div class="technologia__item-back">
       <img :src="src" :alt="title" loading="lazy" />
     </div>
