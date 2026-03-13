@@ -40,7 +40,7 @@ onMounted(() => {
     <div v-show="isPageLoaded" class="header__inner">
       <h1 class="header__title">Stan Posokhov</h1>
 
-      <div class="header__text">frontend developer</div>
+      <div class="header__text">front-end developer</div>
     </div>
   </header>
 </template>
@@ -62,17 +62,30 @@ onMounted(() => {
     flex-wrap: wrap;
     align-items: baseline;
     color: white;
+
+    @include m.max-width(sm) {
+      padding: 1.2rem 1.2rem;
+    }
   }
 
   &__title {
     font-weight: 600;
     font-size: 2.4rem;
     margin: 0 1.5rem 0 0;
+
+    @include m.max-width(sm) {
+      font-size: 2rem;
+      margin-right: 1rem;
+    }
   }
 
   &__text {
     font-size: 1.4rem;
     font-weight: 400;
+
+    @include m.max-width(sm) {
+      font-size: 1.2rem;
+    }
   }
 
   &__title,

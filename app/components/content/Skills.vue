@@ -26,7 +26,7 @@
 import { skillCategories } from '~/data/skills'
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .stack-technologies {
   &__card {
     padding: 1.8rem 2rem;

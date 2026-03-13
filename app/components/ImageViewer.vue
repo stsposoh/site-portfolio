@@ -93,7 +93,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .image-viewer {
   position: fixed;
   inset: 0;

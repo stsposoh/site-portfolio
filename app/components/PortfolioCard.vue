@@ -42,7 +42,7 @@ defineEmits<{
 }>()
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .portfolio-card {
   flex: 0 0 calc((100% - 3 * 1.5rem) / 4);
   margin: 0;

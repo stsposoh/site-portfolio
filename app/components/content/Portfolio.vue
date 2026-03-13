@@ -35,7 +35,7 @@ function openViewer(item: PortfolioItem) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .portfolio {
   &__list {
     display: flex;

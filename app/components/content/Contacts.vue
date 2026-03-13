@@ -123,7 +123,7 @@
 // Contacts section - static content, form submits to Formspree
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .contacts {
   display: grid;
   gap: 2rem;

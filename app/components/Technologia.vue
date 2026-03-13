@@ -29,7 +29,7 @@ const animationStyle = computed(() => ({
 }))
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $size: 8rem;
 $border-color: #e0dde8;
 $accent-color: #6f22b9;
@@ -40,7 +40,7 @@ $accent-color: #6f22b9;
   width: $size;
   margin: 0.8rem;
   border: 0.1rem solid $border-color;
-  border-radius: 50%;
+  border-radius: 1.2rem;
   transform-style: preserve-3d;
   opacity: 0;
   animation: technologiaFadeIn 0.4s ease forwards;
@@ -71,7 +71,7 @@ $accent-color: #6f22b9;
     inset: 0;
     width: $size;
     height: $size;
-    border-radius: 50%;
+    border-radius: 1.2rem;
     transition: transform 0.8s ease;
     backface-visibility: hidden;
   }

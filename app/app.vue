@@ -9,50 +9,56 @@
     </div>
 
     <main class="app-content__main js-app-content-main">
-      <ContentSection
+      <Content
         color="purple"
         title="Станислав Посохов"
-        subtitle="Frontend-разработчик, ориентированный на чистый код и современный стек"
+        subtitle="Front-end разработчик, ориентированный на чистый код и современный стек"
+        image="/images/profile-photo.jpg"
+        image-alt="Stanislav Posokhov"
         @close="closeHandler"
       >
         <ContentAbout />
-      </ContentSection>
+      </Content>
 
-      <ContentSection
+      <Content
         color="teal"
         title="Навыки"
         subtitle="Используемые мной технологии"
+        image="/images/profile-photo.jpg"
         @close="closeHandler"
       >
         <ContentSkills />
-      </ContentSection>
+      </Content>
 
-      <ContentSection
+      <Content
         color="orange"
         title="Сертификаты"
         subtitle="Курсы и сертификации"
+        image="/images/profile-photo.jpg"
         @close="closeHandler"
       >
         <ContentCertificates />
-      </ContentSection>
+      </Content>
 
-      <ContentSection
+      <Content
         color="coral"
         title="Портфолио"
         subtitle="Выбранные проекты и кейсы"
+        image="/images/profile-photo.jpg"
         @close="closeHandler"
       >
         <ContentPortfolio />
-      </ContentSection>
+      </Content>
 
-      <ContentSection
+      <Content
         color="mint"
         title="Контакты"
         subtitle="Связь — email и соцсети"
+        image="/images/profile-photo.jpg"
         @close="closeHandler"
       >
         <ContentContacts />
-      </ContentSection>
+      </Content>
     </main>
   </div>
 </template>
@@ -66,6 +72,7 @@ const { isOpen, closeHandler } = useBlobMenu()
   position: relative;
   z-index: 1;
   height: 100vh;
+  overflow-x: hidden;
 
   &__hero {
     position: relative;
@@ -75,6 +82,12 @@ const { isOpen, closeHandler } = useBlobMenu()
     min-height: 100%;
     width: 100%;
     padding-left: 60%;
+    overflow: hidden;
+
+    @include m.max-width(sm) {
+      padding-left: 1.6rem;
+      justify-content: center;
+    }
 
     &::after {
       content: '';

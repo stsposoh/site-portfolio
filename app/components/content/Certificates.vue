@@ -70,7 +70,7 @@ function openViewer(cert: Cert) {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $accent: #ee2d29;
 $accent-light: #f8ae2c;
 

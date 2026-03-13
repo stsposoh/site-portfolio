@@ -16,7 +16,7 @@ defineEmits<{
 }>()
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .certificate {
   display: block;
   padding: 0;

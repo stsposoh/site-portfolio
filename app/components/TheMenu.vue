@@ -99,6 +99,14 @@ watch(
   font-size: clamp(3rem, 5vw, 6.4rem);
   transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 
+  @include m.max-width(sm) {
+    font-size: clamp(2.4rem, 6.5vw, 3.2rem);
+    max-width: 100%;
+    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
   &--hidden {
     opacity: 0;
     pointer-events: none;
@@ -174,6 +182,9 @@ watch(
     &.--decorated {
       &:before {
         height: 2.5rem;
+        @include m.max-width(sm) {
+          height: 2rem;
+        }
         transition:
           height 0.8s cubic-bezier(0.2, 1, 0.3, 1),
           transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
@@ -184,6 +195,9 @@ watch(
         &:before {
           transform: scale3d(1.2, 1, 1);
           height: 2.8rem;
+          @include m.max-width(sm) {
+            height: 2.2rem;
+          }
         }
       }
     }
@@ -191,6 +205,9 @@ watch(
     &:before {
       content: '';
       width: 60%;
+      @include m.max-width(sm) {
+        width: 100%;
+      }
       height: 0;
       background: linear-gradient(45deg, #f19872, #e86c9a);
       position: absolute;

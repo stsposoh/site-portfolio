@@ -22,8 +22,23 @@
       </span>
       <span class="content-section__close-text">Back</span>
     </button>
-    <h2 class="content-section__title">{{ title }}</h2>
-    <p class="content-section__subtitle">{{ subtitle }}</p>
+
+    <header class="content-section__header">
+      <div v-if="image" class="content-section__header-media">
+        <img
+          :src="image"
+          :alt="imageAlt ?? ''"
+          width="120"
+          height="120"
+          loading="lazy"
+        />
+      </div>
+      <div class="content-section__header-text">
+        <h2 class="content-section__title">{{ title }}</h2>
+        <p class="content-section__subtitle">{{ subtitle }}</p>
+      </div>
+    </header>
+
     <div class="content-section__body">
       <slot />
     </div>
@@ -35,6 +50,8 @@ defineProps<{
   color: 'purple' | 'teal' | 'orange' | 'coral' | 'mint'
   title: string
   subtitle: string
+  image?: string
+  imageAlt?: string
 }>()
 
 defineEmits<{
@@ -53,6 +70,18 @@ defineEmits<{
   max-height: 88vh;
   padding: 5.5rem 2.5rem 2.5rem;
   overflow-y: auto;
+
+  @include m.min-width(md) {
+    @include m.scrollbar-vertical(
+      v.$color-primary,
+      #f0eef5,
+      v.$color-primary-dark
+    );
+  }
+
+  @include m.max-width(sm) {
+    padding: 5.5rem 2rem 2.5rem 2rem;
+  }
   opacity: 0;
   pointer-events: none;
   background: #fff;
@@ -68,6 +97,11 @@ defineEmits<{
     right: 2.4rem;
     left: auto;
     margin: 0;
+
+    @include m.max-width(sm) {
+      top: 1rem;
+      right: 2rem;
+    }
     transform: none;
     display: inline-flex;
     align-items: center;
@@ -77,12 +111,11 @@ defineEmits<{
     height: auto;
     min-height: 4.8rem;
     font-size: 1.5rem;
-    border-radius: 100rem;
+    border-radius: 1.2rem;
     font-weight: 700;
     letter-spacing: 0.02em;
     color: #fff;
     border: none;
-    border-radius: 100rem;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -213,6 +246,59 @@ defineEmits<{
     line-height: 1;
   }
 
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 0.1rem solid rgba(111, 34, 185, 0.12);
+    background: linear-gradient(
+      180deg,
+      rgba(248, 247, 250, 0.6) 0%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    border-radius: 0 0 1.2rem 1.2rem;
+    margin: 0 -0.5rem 2rem;
+    padding: 0 0.5rem 2rem 0.5rem;
+
+    @include m.max-width(sm) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  &__header-media {
+    flex-shrink: 0;
+    width: 10rem;
+    height: 10rem;
+
+    @include m.max-width(sm) {
+      width: 8rem;
+      height: 8rem;
+    }
+
+    img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 1.2rem;
+      object-fit: cover;
+      border: 0.2rem solid rgba(111, 34, 185, 0.2);
+      box-shadow:
+        0 0.4rem 1.2rem rgba(111, 34, 185, 0.1),
+        0 0.2rem 0.6rem rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  &__header-text {
+    flex: 1;
+    min-width: 0;
+  }
+
   &__title,
   &__subtitle,
   &__body {
@@ -228,7 +314,7 @@ defineEmits<{
   }
 
   &__subtitle {
-    margin: 0 0 1.5rem;
+    margin: 0;
     font-size: clamp(1.5rem, 2vw, 1.7rem);
     font-weight: 600;
     color: #555;
