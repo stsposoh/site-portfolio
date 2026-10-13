@@ -1,64 +1,49 @@
 <template>
   <div class="about-content">
     <div class="about-content__text">
-      <p>
-        Веб-разработкой занимаюсь с 2016 года. Основное направление — фронтенд:
-        SPA, лендинги, корпоративные сайты, а также сайты на WordPress.
-      </p>
+      <p v-if="aboutBlock?.shortText">{{ aboutBlock.shortText }}</p>
       <p class="about-content__experience-wrap">
         <span class="about-content__experience"
           >Опыт: {{ experienceText }}</span
         >
       </p>
       <p class="about-content__tech-wrap">
-        Основной стек:
-        <span class="about-content__tech-pill">Vue 3</span>
-        <span class="about-content__tech-pill">Nuxt 3</span>
-        <span class="about-content__tech-pill">TypeScript</span>
-        <span class="about-content__tech-pill">WordPress</span>
+        <template v-if="aboutBlock?.stackText"
+          >{{ aboutBlock.stackText }}
+        </template>
+        <span
+          v-for="stackItem in aboutBlock?.stackItems"
+          :key="stackItem.id"
+          class="about-content__tech-pill"
+          >{{ stackItem.item }}</span
+        >
       </p>
-      <p>
-        Активно использую AI инструменты, что позволяет ускорять процесс
-        разработки без потери качества. Это не автоматическая генерация кода (не
-        вайбкодинг!) — я сознательно применяю AI как помощника, опираясь на
-        многолетний опыт и глубокое понимание фронтенда.
-      </p>
-      <p>
-        Отлично работаю в команде, ценю чистый код и понятную архитектуру
-        проектов. Люблю создавать интерфейсы, которые удобны пользователю и
-        просты в поддержке. Постоянно изучаю новые технологии и не боюсь брать
-        нестандартные задачи.
-      </p>
+      <StrapiBlocksText
+        v-if="aboutBlock?.content && Array.isArray(aboutBlock.content) && aboutBlock.content.length"
+        :nodes="(aboutBlock?.content && Array.isArray(aboutBlock.content) ? aboutBlock.content : [])"
+      />
 
       <InfoCard
-        title="Место работы"
-        logo="/images/profile-photo.jpg"
-        organization-name="SOLAR Digital"
-        organization-url="https://solar-digital.com/"
-        meta="2019 — настоящее время"
+        v-for="card in aboutBlock?.infoCards"
+        :key="card.id"
+        :title="card.description?.[0]?.key ?? ''"
+        :organization-name="card.link?.label ?? ''"
+        :organization-url="card.link?.slug"
+        :meta="card.years"
+        :logo="card.image?.url"
       >
-        <p>Фронтенд-разработчик</p>
-      </InfoCard>
-
-      <InfoCard
-        title="Образование"
-        logo="/images/profile-photo.jpg"
-        organization-name="Открытый Международный Университет Развития Человека «УКРАИНА»"
-        organization-url="https://uu.edu.ua/"
-        meta="2004 — 2008"
-      >
-        <p>Факультет <strong>«Право»</strong></p>
-        <p>Специальность: <strong>бакалавр права</strong></p>
-        <p>
-          Специализация:
-          <strong>административно-хозяйственная деятельность</strong>
-        </p>
+        <template v-for="item in card.description" :key="item.id">
+          <p v-if="item.value">
+            <strong v-if="item.key">{{ item.key }}: </strong>{{ item.value }}
+          </p>
+        </template>
       </InfoCard>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+const { aboutBlock } = useLandingPage()
 const { experienceText } = useExperience()
 </script>
 
@@ -97,6 +82,5 @@ const { experienceText } = useExperience()
     border: 0.1rem solid rgba(111, 34, 185, 0.2);
     border-radius: 0.6rem;
   }
-
 }
 </style>

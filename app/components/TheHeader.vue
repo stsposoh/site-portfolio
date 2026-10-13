@@ -2,6 +2,8 @@
 import SplitType from 'split-type'
 import anime from 'animejs'
 
+const { data: globalSettings } = useGlobalSettings()
+
 const isPageLoaded = ref<boolean>(false)
 
 onMounted(() => {
@@ -38,9 +40,13 @@ onMounted(() => {
 <template>
   <header class="header">
     <div v-show="isPageLoaded" class="header__inner">
-      <h1 class="header__title">Stan Posokhov</h1>
+      <h1 class="header__title">
+        {{ globalSettings?.headerTitle }}
+      </h1>
 
-      <div class="header__text">front-end developer</div>
+      <div class="header__text">
+        {{ globalSettings?.headerPosition }}
+      </div>
     </div>
   </header>
 </template>

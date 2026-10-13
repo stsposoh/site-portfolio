@@ -3,6 +3,12 @@ import { fileURLToPath } from 'node:url'
 export default defineNuxtConfig({
   compatibilityDate: '2026-02-15',
 
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:1337'
+    }
+  },
+
   future: {
     compatibilityVersion: 4
   },
@@ -10,6 +16,8 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true
   },
+
+  modules: ['nuxt-strapi-blocks-renderer'],
 
   alias: {
     '~/data': fileURLToPath(new URL('./app/data', import.meta.url))

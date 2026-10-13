@@ -11,10 +11,10 @@
     <main class="app-content__main js-app-content-main">
       <Content
         color="purple"
-        title="Станислав Посохов"
-        subtitle="Front-end разработчик, ориентированный на чистый код и современный стек"
-        image="/images/profile-photo.jpg"
-        image-alt="Stanislav Posokhov"
+        :title="aboutHeading?.title"
+        :subtitle="aboutHeading?.description"
+        :image="aboutHeading?.image?.url"
+        :image-alt="aboutHeading?.image?.alternativeText"
         @close="closeHandler"
       >
         <ContentAbout />
@@ -22,9 +22,10 @@
 
       <Content
         color="teal"
-        title="Навыки"
-        subtitle="Используемые мной технологии"
-        image="/images/profile-photo.jpg"
+        :title="skillsHeading?.title"
+        :subtitle="skillsHeading?.description"
+        :image="skillsHeading?.image?.url"
+        :image-alt="skillsHeading?.image?.alternativeText"
         @close="closeHandler"
       >
         <ContentSkills />
@@ -65,6 +66,16 @@
 
 <script lang="ts" setup>
 const { isOpen, closeHandler } = useBlobMenu()
+const { data: globalSettings } = useGlobalSettings()
+const { aboutBlock, skillsBlock } = useLandingPage()
+
+const aboutHeading = computed(() => aboutBlock.value?.heading)
+const skillsHeading = computed(() => skillsBlock.value?.heading)
+
+useSeoMeta({
+  title: globalSettings.value?.title,
+  description: globalSettings.value?.description
+})
 </script>
 
 <style lang="scss">

@@ -3,90 +3,63 @@ const props = defineProps<{
   hidden?: boolean
 }>()
 
+const { data: globalSettings } = useGlobalSettings()
+
+const navItems = computed(
+  () => globalSettings.value?.menu?.navItems ?? []
+)
+
 const showDecoration = ref(false)
 const visibleItems = ref<number[]>([])
+
+function showMenuItems() {
+  visibleItems.value = []
+  const count = navItems.value.length
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      visibleItems.value.push(i)
+    }, i * 80)
+  }
+  setTimeout(() => {
+    showDecoration.value = true
+  }, 700)
+}
 
 watch(
   () => props.hidden,
   (newVal) => {
     if (!newVal) {
-      // Меню появляется - показываем пункты каскадом
-      visibleItems.value = []
-      for (let i = 0; i < 5; i++) {
-        setTimeout(() => {
-          visibleItems.value.push(i)
-        }, i * 80)
-      }
-
-      // Добавляем декорацию после появления всех пунктов
-      setTimeout(() => {
-        showDecoration.value = true
-      }, 700)
+      showMenuItems()
     } else {
-      // Меню скрывается - убираем всё
       showDecoration.value = false
       visibleItems.value = []
     }
   },
   { immediate: true }
 )
+
+watch(navItems, (items) => {
+  if (!props.hidden && items.length > 0) {
+    showDecoration.value = false
+    visibleItems.value = []
+    showMenuItems()
+  }
+})
 </script>
 
 <template>
   <nav class="main-menu" :class="{ 'main-menu--hidden': hidden }">
     <div
+      v-for="(item, index) in navItems"
+      :key="item.id"
       class="main-menu__item"
-      :class="{ 'main-menu__item--visible': visibleItems.includes(0) }"
+      :class="{ 'main-menu__item--visible': visibleItems.includes(index) }"
     >
       <a
         href="#"
         class="main-menu__link"
         :class="{ '--decorated': showDecoration }"
-        >About me</a
-      >
-    </div>
-    <div
-      class="main-menu__item"
-      :class="{ 'main-menu__item--visible': visibleItems.includes(1) }"
-    >
-      <a
-        href="#"
-        class="main-menu__link"
-        :class="{ '--decorated': showDecoration }"
-        >Skills</a
-      >
-    </div>
-    <div
-      class="main-menu__item"
-      :class="{ 'main-menu__item--visible': visibleItems.includes(2) }"
-    >
-      <a
-        href="#"
-        class="main-menu__link"
-        :class="{ '--decorated': showDecoration }"
-        >Certificates</a
-      >
-    </div>
-    <div
-      class="main-menu__item"
-      :class="{ 'main-menu__item--visible': visibleItems.includes(3) }"
-    >
-      <a
-        href="#"
-        class="main-menu__link"
-        :class="{ '--decorated': showDecoration }"
-        >Portfolio</a
-      >
-    </div>
-    <div
-      class="main-menu__item"
-      :class="{ 'main-menu__item--visible': visibleItems.includes(4) }"
-    >
-      <a
-        href="#"
-        class="main-menu__link"
-        :class="{ '--decorated': showDecoration }"
-        >Contacts</a
+        >{{ item.label }}</a
       >
     </div>
   </nav>

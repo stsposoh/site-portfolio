@@ -34,8 +34,8 @@
         />
       </div>
       <div class="content-section__header-text">
-        <h2 class="content-section__title">{{ title }}</h2>
-        <p class="content-section__subtitle">{{ subtitle }}</p>
+        <h2 v-if="title" class="content-section__title">{{ title }}</h2>
+        <p v-if="subtitle" class="content-section__subtitle">{{ subtitle }}</p>
       </div>
     </header>
 
@@ -48,8 +48,8 @@
 <script lang="ts" setup>
 defineProps<{
   color: 'purple' | 'teal' | 'orange' | 'coral' | 'mint'
-  title: string
-  subtitle: string
+  title?: string
+  subtitle?: string
   image?: string
   imageAlt?: string
 }>()

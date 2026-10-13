@@ -1,20 +1,19 @@
 <template>
   <div class="stack-technologies">
-    <div class="stack-technologies__card">
+    <div v-if="skillsBlock?.skills?.length" class="stack-technologies__card">
       <section
-        v-for="(category, catIndex) in skillCategories"
-        :key="category.title"
+        v-for="(category, catIndex) in skillsBlock.skills"
+        :key="category.id"
         class="stack-technologies__category"
       >
         <h3 class="stack-technologies__category-title">{{ category.title }}</h3>
         <ul class="stack-technologies__list">
           <Technologia
-            v-for="(skill, skillIndex) in category.skills"
-            :key="`${category.title}-${skill.title}`"
-            :src="skill.src"
-            :title="skill.title"
-            :is-main="skill.isMain"
-            :animation-delay="(catIndex * 15 + skillIndex) * 40"
+            v-for="(skill, skillIndex) in (category.skills ?? [])"
+            :key="skill.id"
+            :src="skill.icon?.url ?? ''"
+            :title="skill.skillName"
+            :animation-delay="(Number(catIndex) * 15 + Number(skillIndex)) * 40"
           />
         </ul>
       </section>
@@ -23,11 +22,15 @@
 </template>
 
 <script lang="ts" setup>
-import { skillCategories } from '~/data/skills'
+const { skillsBlock } = useLandingPage()
 </script>
 
 <style lang="scss">
 .stack-technologies {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
   &__card {
     padding: 1.8rem 2rem;
     background: #f8f7fa;

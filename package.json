@@ -18,6 +18,7 @@
     "animejs": "^3.2.2",
     "modern-normalize": "^3.0.1",
     "nuxt": "^3.14.1592",
+    "nuxt-strapi-blocks-renderer": "^1.1.2",
     "split-type": "^0.3.4"
   },
   "devDependencies": {
