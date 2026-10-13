@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_layout_main_menus",
+  "info": {
+    "displayName": "Main Menu",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "navItems": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

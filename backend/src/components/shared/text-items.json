@@ -1,0 +1,13 @@
+{
+  "collectionName": "components_shared_text_items",
+  "info": {
+    "displayName": "Text items"
+  },
+  "options": {},
+  "attributes": {
+    "item": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

@@ -1,29 +1,9 @@
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
-
-# Node dependencies
-node_modules
-
-# Logs
-logs
-*.log
-
-# Playwright
-test-results
-playwright-report
-playwright/.cache
-
-# Misc
 .DS_Store
-.fleet
-.idea
 
-# Local env files
-.env
-.env.*
-!.env.example
+# Shared AI rules (symlinked locally)
+.claude
+.cursor
+.cursorignore
+CLAUDE.md
+AGENTS.md
+backend/.cursor

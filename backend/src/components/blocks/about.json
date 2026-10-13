@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_blocks_abouts",
+  "info": {
+    "displayName": "About",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "component",
+      "component": "shared.section-heading",
+      "repeatable": false
+    },
+    "shortText": {
+      "type": "string"
+    },
+    "stackText": {
+      "type": "string"
+    },
+    "stackItems": {
+      "type": "component",
+      "component": "shared.text-items",
+      "repeatable": true
+    },
+    "content": {
+      "type": "blocks"
+    },
+    "infoCards": {
+      "type": "component",
+      "component": "shared.info-card",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_shared_section_headings",
+  "info": {
+    "displayName": "Section heading"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  },
+  "config": {}
+}

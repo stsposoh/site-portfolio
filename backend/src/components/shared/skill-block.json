@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_shared_skill_blocks",
+  "info": {
+    "displayName": "Skill block"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string"
+    },
+    "skills": {
+      "type": "component",
+      "component": "shared.skill",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}

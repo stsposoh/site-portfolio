@@ -1,0 +1,32 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: site-portfolio-postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - site_portfolio_db:/var/lib/postgresql/data
+
+  strapi:
+    build: .
+    platform: linux/arm64
+    container_name: site-portfolio-strapi
+    ports:
+      - "1337:1337"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+
+volumes:
+  site_portfolio_db:

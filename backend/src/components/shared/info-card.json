@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_shared_info_cards",
+  "info": {
+    "displayName": "Info card"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "link": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false
+    },
+    "years": {
+      "type": "string"
+    },
+    "description": {
+      "type": "component",
+      "component": "shared.key-value",
+      "repeatable": true
+    }
+  },
+  "config": {}
+}
