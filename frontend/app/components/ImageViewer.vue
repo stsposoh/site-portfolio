@@ -68,7 +68,10 @@ function close() {
 }
 
 function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape') close()
+  if (e.key !== 'Escape') return
+  // Keeps the same Escape press from also closing the section underneath
+  e.stopPropagation()
+  close()
 }
 
 watch(

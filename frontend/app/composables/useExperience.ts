@@ -7,7 +7,7 @@ const CAREER_START = new Date(2016, 0, 1)
  * and formats them with correct Russian grammatical cases
  */
 export function useExperience() {
-  const experienceText = computed(() => {
+  const experience = computed(() => {
     const now = new Date()
     let years = now.getFullYear() - CAREER_START.getFullYear()
     let months = now.getMonth() - CAREER_START.getMonth()
@@ -17,8 +17,14 @@ export function useExperience() {
       months += 12
     }
 
-    return `${formatYears(years)}${formatMonths(months)}`
+    return { years, months }
   })
 
-  return { experienceText }
+  const experienceText = computed(
+    () =>
+      `${formatYears(experience.value.years)}${formatMonths(experience.value.months)}`
+  )
+  const experienceYears = computed(() => experience.value.years)
+
+  return { experienceText, experienceYears }
 }

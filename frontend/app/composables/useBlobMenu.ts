@@ -1,294 +1,411 @@
+import type { Ref } from 'vue'
 import anime from 'animejs'
+import { prefersReducedMotion } from '~/utils/motion'
 
-interface DOMRect {
-  left: number
-  top: number
-  width: number
-  height: number
-}
+const NUMBER_PATTERN = /-?\d*\.?\d+/
+const NUMBER_PATTERN_GLOBAL = /-?\d*\.?\d+/g
 
-/** Debounce function with proper TypeScript typing */
-function debounce<T extends (...args: unknown[]) => void>(
-  func: T,
-  wait: number,
-  immediate?: boolean
-): (...args: Parameters<T>) => void {
-  let timeout: ReturnType<typeof setTimeout> | null = null
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias -- required for proper `this` binding in closure
-    const context = this
-    const later = () => {
-      timeout = null
-      if (!immediate) func.apply(context, args)
-    }
-    const callNow = immediate && !timeout
-    if (timeout) clearTimeout(timeout)
-    timeout = setTimeout(later, wait)
-    if (callNow) func.apply(context, args)
-  }
-}
+const WARP_AMPLITUDE = 10
+const WARP_FREQUENCY = 0.012
+const WARP_SPEED = 0.5
+const POINTER_EASING = 0.06
 
 /** Animated blob element for menu navigation */
 class MenuBlob {
-  private DOM: { el: Element }
-  private rect!: DOMRect
-  private descriptions: string[] = []
-  private layers: SVGPathElement[] = []
+  private layers: SVGPathElement[]
+  private descriptions: string[]
+  private numbers: number[][]
+  private separators: string[][]
+  private phase: number
 
-  constructor(el: Element) {
-    this.DOM = { el }
-    this.init()
-  }
+  constructor(el: SVGGElement, index: number) {
+    // Local coordinates, so the origin stays valid when the group itself is transformed
+    const box = el.getBBox()
+    const origin = `${box.x + box.width / 2}px ${box.y + box.height / 2}px`
 
-  private init(): void {
-    this.rect = (this.DOM.el as HTMLElement).getBoundingClientRect()
-    this.layers = Array.from(this.DOM.el.querySelectorAll('path'), (path) => {
-      const p = path as SVGPathElement
-      const originX = this.rect.left + this.rect.width / 2
-      const originY = this.rect.top + this.rect.height / 2
-      p.style.transformOrigin = `${originX}px ${originY}px`
-      p.style.opacity = '0'
-      const d = p.getAttribute('d')
-      this.descriptions.push(d ?? '')
-      return p
-    })
-
-    window.addEventListener(
-      'resize',
-      debounce(() => {
-        this.rect = (this.DOM.el as HTMLElement).getBoundingClientRect()
-        const originX = this.rect.left + this.rect.width / 2
-        const originY = this.rect.top + this.rect.height / 2
-        this.layers.forEach(
-          (layer) => (layer.style.transformOrigin = `${originX}px ${originY}px`)
-        )
-      }, 20)
+    this.layers = Array.from(el.querySelectorAll('path'))
+    this.descriptions = this.layers.map((path) => path.getAttribute('d') ?? '')
+    this.numbers = this.descriptions.map((d) =>
+      (d.match(NUMBER_PATTERN_GLOBAL) ?? []).map(Number)
     )
-  }
+    this.separators = this.descriptions.map((d) => d.split(NUMBER_PATTERN))
+    this.phase = index * 1.7
 
-  intro(): Promise<void> {
-    return new Promise((resolve) => {
-      anime.remove(this.layers)
-      anime({
-        targets: this.layers,
-        duration: 1800,
-        delay: (_t, i) => i * 120,
-        easing: 'cubicBezier(0.2, 1, 0.1, 1)',
-        scale: [0.2, 1],
-        opacity: {
-          value: [0, 1],
-          duration: 300,
-          delay: (_t, i) => i * 120,
-          easing: 'linear'
-        },
-        complete: () => resolve()
-      })
+    this.layers.forEach((path) => {
+      path.style.transformOrigin = origin
+      path.style.opacity = '0'
     })
   }
 
-  expand(): Promise<void> {
-    return new Promise((resolve) => {
-      this.layers.forEach((layer) => {
-        layer.style.opacity = '1'
-        ;(layer as HTMLElement).style.transform = 'scale(1)'
-      })
+  /**
+   * Displaces every point by a smooth position-based field, so coincident
+   * points (path start/end) move together and the outline stays closed.
+   */
+  warp(time: number, strength: number): void {
+    this.layers.forEach((layer, layerIndex) => {
+      const numbers = this.numbers[layerIndex]
+      const separators = this.separators[layerIndex]
+      const phase = time * WARP_SPEED + this.phase + layerIndex * 0.4
+      const amplitude = WARP_AMPLITUDE * strength
+      let d = separators[0]
 
-      anime({
-        targets: this.layers,
-        duration: 1000,
-        delay: (_t, i) => i * 50 + 200,
-        easing: 'cubicBezier(0.8, 0, 0.1, 0)',
-        d: (el) => (el as SVGPathElement).getAttribute('pathdata:id'),
-        complete: () => resolve()
-      })
+      for (let i = 0; i < numbers.length; i += 2) {
+        const x = numbers[i]
+        const y = numbers[i + 1]
+        const dx = Math.sin(y * WARP_FREQUENCY + phase) * amplitude
+        const dy = Math.cos(x * WARP_FREQUENCY + phase * 0.8) * amplitude
+        d += `${(x + dx).toFixed(1)}${separators[i + 1]}${(y + dy).toFixed(1)}${separators[i + 2]}`
+      }
+
+      layer.setAttribute('d', d)
     })
   }
 
-  collapse(): Promise<void> {
-    return new Promise((resolve) => {
-      anime({
-        targets: this.layers,
-        duration: 800,
-        delay: (_t, i, total) => (total - i - 1) * 50 + 400,
-        easing: 'cubicBezier(0.2, 1, 0.1, 1)',
-        d: (_t, i) => this.descriptions[i],
-        complete: () => resolve()
-      })
-    })
+  intro(duration: number): Promise<void> {
+    anime.remove(this.layers)
+    return anime({
+      targets: this.layers,
+      duration,
+      delay: (_t, i) => i * duration * 0.07,
+      easing: 'cubicBezier(0.2, 1, 0.1, 1)',
+      scale: [0.2, 1],
+      opacity: {
+        value: [0, 1],
+        duration: duration * 0.2,
+        delay: (_t, i) => i * duration * 0.07,
+        easing: 'linear'
+      }
+    }).finished
   }
 
-  hide(): void {
+  emphasize(isActive: boolean): void {
     anime.remove(this.layers)
     anime({
       targets: this.layers,
-      duration: 800,
-      delay: (_t, i, total) => (total - i - 1) * 80,
+      scale: isActive ? 1.08 : 1,
+      duration: 900,
+      delay: (_t, i) => i * 30,
+      easing: 'easeOutElastic(1, 0.7)'
+    })
+  }
+
+  expand(duration: number): Promise<void> {
+    anime.remove(this.layers)
+    this.layers.forEach((layer) => {
+      layer.style.opacity = '1'
+      layer.style.transform = 'scale(1)'
+    })
+
+    return anime({
+      targets: this.layers,
+      duration,
+      delay: (_t, i) => i * duration * 0.04,
+      easing: 'cubicBezier(0.7, 0, 0.2, 1)',
+      d: (el: SVGPathElement) => el.getAttribute('pathdata:id')
+    }).finished
+  }
+
+  collapse(duration: number): Promise<void> {
+    return anime({
+      targets: this.layers,
+      duration,
+      delay: (_t, i, total) => (total - i - 1) * duration * 0.05,
+      easing: 'cubicBezier(0.2, 1, 0.1, 1)',
+      d: (_t, i) => this.descriptions[i]
+    }).finished
+  }
+
+  hide(duration: number): void {
+    anime.remove(this.layers)
+    anime({
+      targets: this.layers,
+      duration,
+      delay: (_t, i, total) => (total - i - 1) * duration * 0.08,
       easing: 'easeInOutExpo',
       scale: 0,
       opacity: {
         value: 0,
-        duration: 500,
-        delay: (_t, i, total) => (total - i - 1) * 80,
+        duration: duration * 0.6,
+        delay: (_t, i, total) => (total - i - 1) * duration * 0.08,
         easing: 'linear'
       }
     })
   }
 
-  show(): Promise<void> {
+  show(delay: number, duration: number): Promise<void> {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        this.intro().then(() => resolve())
-      }, 400)
+      setTimeout(() => this.intro(duration).then(resolve), delay)
     })
-  }
-
-  breathe(): void {
-    anime.remove(this.layers)
-    this.layers.forEach((layer, i) => {
-      anime({
-        targets: layer,
-        scale: [1, 1.035],
-        duration: 3500 + Math.random() * 1500,
-        delay: i * 200 + Math.random() * 500,
-        easing: 'easeInOutSine',
-        loop: true,
-        direction: 'alternate'
-      })
-    })
-  }
-
-  stopBreathe(): void {
-    anime.remove(this.layers)
   }
 }
 
-const MENU_TO_BLOB_INDEX = [0, 1, 2, 3, 4] as const
-
-export function useBlobMenu() {
+export function useBlobMenu(slugs: Ref<string[]>) {
   const isOpen = ref(false)
-  const animationInProgress = ref(false)
-  const closeHandler = ref<() => void>(() => {})
+  const hoveredIndex = ref<number | null>(null)
+  const openedIndex = ref<number | null>(null)
+  const introSkipped = ref(false)
 
-  onMounted(() => {
-    const svgEl = document.querySelector('.svg-scene')
-    if (!svgEl) return
+  const reducedMotion = prefersReducedMotion()
+  const duration = (ms: number) => (reducedMotion ? 1 : ms)
 
-    const blobs: MenuBlob[] = []
-    Array.from(svgEl.querySelectorAll('g')).forEach((el) => {
-      const blob = new MenuBlob(el)
-      blobs.push(blob)
-      blob.intro().then(() => blob.breathe())
-    })
+  let svgEl: SVGSVGElement | null = null
+  let contentEl: HTMLElement | null = null
+  let contentSections: HTMLElement[] = []
+  let blobs: MenuBlob[] = []
+  let currentIndex = -1
+  let isBusy = true
+  let introRequested = false
+  let introStarted = false
 
-    const contentEl = document.querySelector('.js-app-content-main')
-    if (!contentEl) return
+  let warpStrength = 0
+  let warpTarget = 0
+  const pointer = { x: 0, y: 0 }
+  const parallax = { x: 0, y: 0 }
+  let frame = 0
 
-    const contentInner = Array.from(
-      contentEl.querySelectorAll('.content-section')
-    )
-    const links = Array.from(document.querySelectorAll('.main-menu__link'))
-
-    let currentIndex = -1
-
-    links.forEach((link, pos) => {
-      link.addEventListener('click', (ev) => {
-        ev.preventDefault()
-        openSection(pos)
-      })
-    })
-
-    function openSection(pos: number): void {
-      isOpen.value = true
-      animationInProgress.value = true
-      currentIndex = pos
-
-      const blobIndex = MENU_TO_BLOB_INDEX[pos]
-      const currentBlob = blobs[blobIndex]
-      const contentSection = contentInner[pos]
-      const closeBtn = contentSection.querySelector('.content-section__close')
-
-      currentBlob.stopBreathe()
-      currentBlob.expand().then(() => {
-        animationInProgress.value = false
-        ;(contentEl as HTMLElement).style.pointerEvents = 'auto'
-        ;(contentSection as HTMLElement).style.pointerEvents = 'auto'
-        ;(contentSection as HTMLElement).style.opacity = '1'
-
-        const toShow = [
-          contentSection.querySelector('.content-section__title'),
-          contentSection.querySelector('.content-section__subtitle'),
-          contentSection.querySelector('.content-section__body'),
-          closeBtn
-        ].filter(Boolean)
-
-        anime({
-          targets: toShow,
-          duration: 300,
-          easing: 'easeOutQuad',
-          opacity: [0, 1]
-        })
-      })
-
-      blobs
-        .filter((_, i) => i !== blobIndex)
-        .forEach((blob) => {
-          blob.stopBreathe()
-          blob.hide()
-        })
+  const tick = (now: number) => {
+    if (warpTarget > 0) {
+      warpStrength += (warpTarget - warpStrength) * 0.02
+      blobs.forEach((blob) => blob.warp(now / 1000, warpStrength))
     }
 
-    function close(): void {
-      if (!isOpen.value) return
-      animationInProgress.value = true
+    parallax.x += (pointer.x - parallax.x) * POINTER_EASING
+    parallax.y += (pointer.y - parallax.y) * POINTER_EASING
+    svgEl?.style.setProperty('--parallax-x', parallax.x.toFixed(3))
+    svgEl?.style.setProperty('--parallax-y', parallax.y.toFixed(3))
 
-      const prevIndex = currentIndex
-      const prevBlobIndex = MENU_TO_BLOB_INDEX[prevIndex]
-      const blobToCollapse = blobs[prevBlobIndex]
-      const contentSection = contentInner[prevIndex]
-      const closeBtn = contentSection.querySelector('.content-section__close')
+    frame = requestAnimationFrame(tick)
+  }
 
-      const toHide = [
-        contentSection.querySelector('.content-section__title'),
-        contentSection.querySelector('.content-section__subtitle'),
-        contentSection.querySelector('.content-section__body'),
-        closeBtn
+  const onPointerMove = (event: PointerEvent) => {
+    if (isOpen.value) return
+    pointer.x = (event.clientX / window.innerWidth - 0.5) * 2
+    pointer.y = (event.clientY / window.innerHeight - 0.5) * 2
+  }
+
+  const startWarp = () => {
+    warpStrength = 0
+    warpTarget = reducedMotion ? 0 : 1
+  }
+
+  const stopWarp = () => {
+    warpStrength = 0
+    warpTarget = 0
+  }
+
+  const sectionKey = (index: number) =>
+    slugs.value[index] || `section-${index + 1}`
+
+  const sectionIndexFromHash = () => {
+    const key = decodeURIComponent(window.location.hash.slice(1))
+    if (!key) return -1
+    return blobs.findIndex((_, index) => sectionKey(index) === key)
+  }
+
+  /** Brings the open section in line with the URL hash once animations allow */
+  function syncWithLocation(): void {
+    if (isBusy) return
+
+    const target = sectionIndexFromHash()
+    if (target === currentIndex) return
+
+    if (isOpen.value) close()
+    else if (target >= 0) open(target)
+  }
+
+  function settle(): void {
+    isBusy = false
+    syncWithLocation()
+  }
+
+  function playIntro(): void {
+    if (introStarted) return
+    if (!blobs.length) {
+      introRequested = true
+      return
+    }
+
+    introStarted = true
+    Promise.all(blobs.map((blob) => blob.intro(duration(1800)))).then(() => {
+      startWarp()
+      settle()
+    })
+  }
+
+  function highlight(index: number | null): void {
+    if (isOpen.value || hoveredIndex.value === index) return
+
+    const previous = hoveredIndex.value
+    hoveredIndex.value = index
+    if (isBusy || reducedMotion) return
+
+    if (previous !== null) blobs[previous]?.emphasize(false)
+    if (index !== null) blobs[index]?.emphasize(true)
+  }
+
+  function open(index: number): void {
+    const blob = blobs[index]
+    const section = contentSections[index]
+    if (isBusy || isOpen.value || !blob || !section || !contentEl) return
+
+    isBusy = true
+    isOpen.value = true
+    hoveredIndex.value = null
+    currentIndex = index
+    pointer.x = 0
+    pointer.y = 0
+    stopWarp()
+
+    const content = contentEl
+    blob.expand(duration(650)).then(() => {
+      content.style.pointerEvents = 'auto'
+      section.style.pointerEvents = 'auto'
+      section.style.opacity = '1'
+      openedIndex.value = index
+
+      const targets = [
+        section.querySelector('.content-section__close'),
+        section.querySelector('.content-section__title'),
+        section.querySelector('.content-section__subtitle'),
+        section.querySelector('.content-section__body')
       ].filter(Boolean)
 
       anime({
-        targets: toHide,
-        duration: 200,
-        easing: 'easeInQuad',
-        opacity: 0,
-        complete: () => {
-          ;(contentSection as HTMLElement).style.opacity = '0'
-          ;(contentSection as HTMLElement).style.pointerEvents = 'none'
-          ;(contentEl as HTMLElement).style.pointerEvents = 'none'
-        }
+        targets,
+        opacity: [0, 1],
+        translateY: [24, 0],
+        delay: anime.stagger(duration(70)),
+        duration: duration(500),
+        easing: 'easeOutCubic',
+        complete: settle
       })
+    })
 
-      setTimeout(() => {
-        isOpen.value = false
-      }, 1000)
+    blobs
+      .filter((_, i) => i !== index)
+      .forEach((other) => other.hide(duration(600)))
+  }
 
-      const collapsePromise = blobToCollapse.collapse()
-      const showPromises = blobs
-        .filter((_, i) => i !== prevBlobIndex)
-        .map((blob) => blob.show())
+  function close(): void {
+    const blob = blobs[currentIndex]
+    const section = contentSections[currentIndex]
+    if (isBusy || !isOpen.value || !blob || !section || !contentEl) return
 
-      currentIndex = -1
+    isBusy = true
+    openedIndex.value = null
+    const content = contentEl
 
-      Promise.all([collapsePromise, ...showPromises]).then(() => {
-        animationInProgress.value = false
-        blobs.forEach((blob) => blob.breathe())
-      })
+    anime({
+      targets: section.querySelectorAll(
+        '.content-section__close, .content-section__title, .content-section__subtitle, .content-section__body'
+      ),
+      duration: duration(200),
+      easing: 'easeInQuad',
+      opacity: 0,
+      complete: () => {
+        section.style.opacity = '0'
+        section.style.pointerEvents = 'none'
+        content.style.pointerEvents = 'none'
+      }
+    })
+
+    setTimeout(() => {
+      isOpen.value = false
+    }, duration(600))
+
+    const collapsed = blob.collapse(duration(700))
+    const shown = blobs
+      .filter((other) => other !== blob)
+      .map((other) => other.show(duration(200), duration(1000)))
+
+    currentIndex = -1
+
+    Promise.all([collapsed, ...shown]).then(() => {
+      startWarp()
+      settle()
+    })
+  }
+
+  function openSection(index: number): void {
+    if (isBusy || isOpen.value) return
+    history.pushState({ section: index }, '', `#${sectionKey(index)}`)
+    open(index)
+  }
+
+  function requestClose(): void {
+    if (isBusy || !isOpen.value) return
+
+    // Our own history entry: step back so Back/Forward stay meaningful
+    if (history.state?.section !== undefined) {
+      history.back()
+      return
     }
 
-    closeHandler.value = close
+    history.replaceState(
+      null,
+      '',
+      window.location.pathname + window.location.search
+    )
+    close()
+  }
+
+  const onKeydown = (event: KeyboardEvent) => {
+    if (event.key === 'Escape') requestClose()
+  }
+
+  const onBackdropClick = (event: MouseEvent) => {
+    if (event.target === event.currentTarget) requestClose()
+  }
+
+  onMounted(() => {
+    svgEl = document.querySelector<SVGSVGElement>('.svg-scene')
+    contentEl = document.querySelector<HTMLElement>('.js-app-content-main')
+    if (!svgEl || !contentEl) return
+
+    blobs = Array.from(
+      svgEl.querySelectorAll<SVGGElement>('g'),
+      (el, index) => new MenuBlob(el, index)
+    )
+    contentSections = Array.from(
+      contentEl.querySelectorAll<HTMLElement>('.content-section')
+    )
+
+    window.addEventListener('keydown', onKeydown)
+    window.addEventListener('popstate', syncWithLocation)
+    contentEl.addEventListener('click', onBackdropClick)
+
+    if (!reducedMotion) {
+      window.addEventListener('pointermove', onPointerMove)
+      frame = requestAnimationFrame(tick)
+    }
+
+    const initialIndex = sectionIndexFromHash()
+    if (initialIndex >= 0) {
+      introStarted = true
+      introSkipped.value = true
+      isBusy = false
+      open(initialIndex)
+    } else if (introRequested) {
+      playIntro()
+    }
+  })
+
+  onBeforeUnmount(() => {
+    cancelAnimationFrame(frame)
+    window.removeEventListener('pointermove', onPointerMove)
+    window.removeEventListener('keydown', onKeydown)
+    window.removeEventListener('popstate', syncWithLocation)
+    contentEl?.removeEventListener('click', onBackdropClick)
   })
 
   return {
     isOpen,
-    closeHandler,
-    animationInProgress
+    hoveredIndex,
+    openedIndex,
+    introSkipped,
+    playIntro,
+    highlight,
+    openSection,
+    closeHandler: requestClose
   }
 }

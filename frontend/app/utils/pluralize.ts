@@ -29,3 +29,22 @@ export const formatMonths = (n: number): string => {
   if (lastDigit >= 2 && lastDigit <= 4) return ` и ${n} месяца`
   return ` и ${n} месяцев`
 }
+
+/**
+ * Picks the Russian plural form for a number
+ * @param n - number to agree with
+ * @param forms - [one, few, many], e.g. ['проект', 'проекта', 'проектов']
+ * @returns the matching form without the number
+ */
+export const pluralWord = (
+  n: number,
+  [one, few, many]: [string, string, string]
+): string => {
+  const lastDigit = n % 10
+  const lastTwoDigits = n % 100
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return many
+  if (lastDigit === 1) return one
+  if (lastDigit >= 2 && lastDigit <= 4) return few
+  return many
+}

@@ -1,20 +1,34 @@
 <template>
   <div class="app-content" :class="{ 'is-content-open': isOpen }">
-    <TheHeader />
+    <TheHeader :revealed="introDone" />
+
+    <TheIntro
+      v-if="!introDone"
+      :title="globalSettings?.headerTitle"
+      target-selector=".header__title"
+      @start="playIntro"
+      @land="introLanded = true"
+    />
 
     <div class="app-content__hero">
-      <TheMenu :hidden="isOpen" />
+      <TheMenu
+        :hidden="isOpen || !introDone"
+        :active-index="hoveredIndex"
+        @hover="highlight"
+        @select="openSection"
+      />
 
-      <SVGScene />
+      <SVGScene
+        :active-index="hoveredIndex"
+        @hover="highlight"
+        @select="openSection"
+      />
     </div>
 
     <main class="app-content__main js-app-content-main">
       <Content
         color="purple"
-        :title="aboutHeading?.title"
-        :subtitle="aboutHeading?.description"
-        :image="aboutHeading?.image?.url"
-        :image-alt="aboutHeading?.image?.alternativeText"
+        :active="openedIndex === 0"
         @close="closeHandler"
       >
         <ContentAbout />
@@ -22,6 +36,7 @@
 
       <Content
         color="teal"
+        :active="openedIndex === 1"
         :title="skillsHeading?.title"
         :subtitle="skillsHeading?.description"
         :image="skillsHeading?.image?.url"
@@ -33,6 +48,7 @@
 
       <Content
         color="orange"
+        :active="openedIndex === 2"
         title="Сертификаты"
         subtitle="Курсы и сертификации"
         image="/images/profile-photo.jpg"
@@ -43,6 +59,7 @@
 
       <Content
         color="coral"
+        :active="openedIndex === 3"
         title="Портфолио"
         subtitle="Выбранные проекты и кейсы"
         image="/images/profile-photo.jpg"
@@ -53,6 +70,7 @@
 
       <Content
         color="mint"
+        :active="openedIndex === 4"
         title="Контакты"
         subtitle="Связь — email и соцсети"
         image="/images/profile-photo.jpg"
@@ -65,11 +83,25 @@
 </template>
 
 <script lang="ts" setup>
-const { isOpen, closeHandler } = useBlobMenu()
 const { data: globalSettings } = useGlobalSettings()
-const { aboutBlock, skillsBlock } = useLandingPage()
+const sectionSlugs = computed(
+  () => globalSettings.value?.menu?.navItems.map((item) => item.slug ?? '') ?? []
+)
 
-const aboutHeading = computed(() => aboutBlock.value?.heading)
+const {
+  isOpen,
+  hoveredIndex,
+  openedIndex,
+  introSkipped,
+  playIntro,
+  highlight,
+  openSection,
+  closeHandler
+} = useBlobMenu(sectionSlugs)
+const introLanded = ref(false)
+const introDone = computed(() => introLanded.value || introSkipped.value)
+const { skillsBlock } = useLandingPage()
+
 const skillsHeading = computed(() => skillsBlock.value?.heading)
 
 useSeoMeta({

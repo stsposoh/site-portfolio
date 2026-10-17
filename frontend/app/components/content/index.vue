@@ -1,58 +1,63 @@
 <template>
-  <div class="content-section">
+  <div class="content-section" :class="`--${color}`">
     <button
-      :class="['content-section__close', `--${color}`]"
+      class="content-section__close"
       type="button"
-      aria-label="Back to menu"
+      aria-label="Close"
       @click="$emit('close')"
     >
-      <span class="content-section__close-icon" aria-hidden="true">
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path d="M19 12H5M12 19l-7-7 7-7" />
-        </svg>
-      </span>
-      <span class="content-section__close-text">Back</span>
+      <svg
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        aria-hidden="true"
+      >
+        <path d="M18 6 6 18M6 6l12 12" />
+      </svg>
     </button>
 
-    <header class="content-section__header">
-      <div v-if="image" class="content-section__header-media">
-        <img
-          :src="image"
-          :alt="imageAlt ?? ''"
-          width="120"
-          height="120"
-          loading="lazy"
-        />
-      </div>
-      <div class="content-section__header-text">
-        <h2 v-if="title" class="content-section__title">{{ title }}</h2>
-        <p v-if="subtitle" class="content-section__subtitle">{{ subtitle }}</p>
-      </div>
-    </header>
+    <div class="content-section__scroll">
+      <header
+        v-if="title || subtitle || image"
+        class="content-section__header"
+      >
+        <div v-if="image" class="content-section__header-media">
+          <img
+            :src="image"
+            :alt="imageAlt ?? ''"
+            width="120"
+            height="120"
+            loading="lazy"
+          />
+        </div>
+        <div class="content-section__header-text">
+          <h2 v-if="title" class="content-section__title">{{ title }}</h2>
+          <p v-if="subtitle" class="content-section__subtitle">{{ subtitle }}</p>
+        </div>
+      </header>
 
-    <div class="content-section__body">
-      <slot />
+      <div class="content-section__body">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-defineProps<{
+const props = defineProps<{
   color: 'purple' | 'teal' | 'orange' | 'coral' | 'mint'
   title?: string
   subtitle?: string
   image?: string
   imageAlt?: string
+  active?: boolean
 }>()
+
+provide(SECTION_ACTIVE_KEY, toRef(props, 'active'))
 
 defineEmits<{
   close: []
@@ -68,229 +73,141 @@ defineEmits<{
   width: calc(100% - 3.2rem);
   max-width: 120rem;
   max-height: 88vh;
-  padding: 5.5rem 2.5rem 2.5rem;
-  overflow-y: auto;
-
-  @include m.min-width(md) {
-    @include m.scrollbar-vertical(
-      v.$color-primary,
-      #f0eef5,
-      v.$color-primary-dark
-    );
-  }
-
-  @include m.max-width(sm) {
-    padding: 5.5rem 2rem 2.5rem 2rem;
-  }
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
-  background: #fff;
+  color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(10, 8, 22, 0.55);
+  backdrop-filter: blur(2.4rem) saturate(140%);
+  -webkit-backdrop-filter: blur(2.4rem) saturate(140%);
+  border: 0.1rem solid rgba(255, 255, 255, 0.14);
   border-radius: 2rem;
   box-shadow:
-    0 2.4rem 4.8rem rgba(0, 0, 0, 0.18),
-    0 0.8rem 1.6rem rgba(0, 0, 0, 0.1);
-  border-left: 0.4rem solid #6f22b9;
+    0 3rem 8rem rgba(0, 0, 0, 0.35),
+    inset 0 0.1rem 0 rgba(255, 255, 255, 0.12);
+
+  &.--purple {
+    --accent: #c9a7ff;
+  }
+
+  &.--teal {
+    --accent: #5ee9d0;
+  }
+
+  &.--orange {
+    --accent: #ffc46b;
+  }
+
+  &.--coral {
+    --accent: #ff8fa3;
+  }
+
+  &.--mint {
+    --accent: #6ff2c4;
+  }
 
   &__close {
     position: absolute;
-    top: 2.4rem;
-    right: 2.4rem;
-    left: auto;
-    margin: 0;
+    z-index: 2;
+    top: 1.2rem;
+    right: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    padding: 0;
+    color: #fff;
+    background-color: rgba(10, 8, 22, 0.6);
+    backdrop-filter: blur(1.2rem);
+    -webkit-backdrop-filter: blur(1.2rem);
+    border: 0.1rem solid rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      background-color 0.3s,
+      border-color 0.3s;
 
-    @include m.max-width(sm) {
-      top: 1rem;
+    @include m.min-width(md) {
+      top: 2rem;
       right: 2rem;
     }
-    transform: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.8rem;
-    padding: 1rem 2rem 1rem 1.4rem;
-    width: auto;
-    height: auto;
-    min-height: 4.8rem;
-    font-size: 1.5rem;
-    border-radius: 1.2rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    color: #fff;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    &:hover {
-      .content-section__close-icon {
-        transform: translateX(-0.3rem);
+    svg {
+      transition: transform 0.4s cubic-bezier(0.2, 1, 0.3, 1);
+    }
+
+    &:hover,
+    &:focus-visible {
+      background-color: color-mix(in srgb, var(--accent) 25%, transparent);
+      border-color: var(--accent);
+
+      svg {
+        transform: rotate(90deg);
       }
     }
 
     &:focus {
       outline: none;
     }
-
-    // Modifiers by color
-    &.--purple {
-      background: linear-gradient(135deg, #6f22b9, #3a3d98);
-      box-shadow: 0 0.4rem 1.2rem rgba(111, 34, 185, 0.3);
-
-      &:hover {
-        background: linear-gradient(135deg, #8a3dd9, #4b52b8);
-        box-shadow: 0 0.6rem 2rem rgba(111, 34, 185, 0.4);
-      }
-
-      &:active {
-        box-shadow: 0 0.2rem 0.8rem rgba(111, 34, 185, 0.3);
-      }
-
-      &:focus {
-        box-shadow:
-          0 0 0 0.3rem rgba(111, 34, 185, 0.3),
-          0 0.4rem 1.2rem rgba(111, 34, 185, 0.3);
-      }
-    }
-
-    &.--teal {
-      background: linear-gradient(135deg, #07d89d, #0947db);
-      box-shadow: 0 0.4rem 1.2rem rgba(7, 216, 157, 0.3);
-
-      &:hover {
-        background: linear-gradient(135deg, #08f5b8, #0b5aff);
-        box-shadow: 0 0.6rem 2rem rgba(7, 216, 157, 0.4);
-      }
-
-      &:active {
-        box-shadow: 0 0.2rem 0.8rem rgba(7, 216, 157, 0.3);
-      }
-
-      &:focus {
-        box-shadow:
-          0 0 0 0.3rem rgba(7, 216, 157, 0.3),
-          0 0.4rem 1.2rem rgba(7, 216, 157, 0.3);
-      }
-    }
-
-    &.--orange {
-      background: linear-gradient(135deg, #f8ae2c, #ee2d29);
-      box-shadow: 0 0.4rem 1.2rem rgba(238, 45, 41, 0.3);
-
-      &:hover {
-        background: linear-gradient(135deg, #ffc44d, #ff3e3a);
-        box-shadow: 0 0.6rem 2rem rgba(238, 45, 41, 0.4);
-      }
-
-      &:active {
-        box-shadow: 0 0.2rem 0.8rem rgba(238, 45, 41, 0.3);
-      }
-
-      &:focus {
-        box-shadow:
-          0 0 0 0.3rem rgba(238, 45, 41, 0.3),
-          0 0.4rem 1.2rem rgba(238, 45, 41, 0.3);
-      }
-    }
-
-    &.--coral {
-      background: linear-gradient(135deg, #de2d3e, #9d316e);
-      box-shadow: 0 0.4rem 1.2rem rgba(222, 45, 62, 0.3);
-
-      &:hover {
-        background: linear-gradient(135deg, #ff3e4f, #b83c85);
-        box-shadow: 0 0.6rem 2rem rgba(222, 45, 62, 0.4);
-      }
-
-      &:active {
-        box-shadow: 0 0.2rem 0.8rem rgba(222, 45, 62, 0.3);
-      }
-
-      &:focus {
-        box-shadow:
-          0 0 0 0.3rem rgba(222, 45, 62, 0.3),
-          0 0.4rem 1.2rem rgba(222, 45, 62, 0.3);
-      }
-    }
-
-    &.--mint {
-      background: linear-gradient(135deg, #07d89d, #1d6449);
-      box-shadow: 0 0.4rem 1.2rem rgba(7, 216, 157, 0.3);
-
-      &:hover {
-        background: linear-gradient(135deg, #08f5b8, #247a5a);
-        box-shadow: 0 0.6rem 2rem rgba(7, 216, 157, 0.4);
-      }
-
-      &:active {
-        box-shadow: 0 0.2rem 0.8rem rgba(7, 216, 157, 0.3);
-      }
-
-      &:focus {
-        box-shadow:
-          0 0 0 0.3rem rgba(7, 216, 157, 0.3),
-          0 0.4rem 1.2rem rgba(7, 216, 157, 0.3);
-      }
-    }
   }
 
-  &__close-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  &__scroll {
+    position: relative;
+    z-index: 0;
+    flex: 1;
+    min-height: 0;
+    padding: 5.5rem 2rem 2.5rem;
+    overflow-y: auto;
 
-    svg {
-      filter: drop-shadow(0 0.1rem 0.2rem rgba(0, 0, 0, 0.1));
+    @include m.min-width(sm) {
+      padding: 5.5rem 2.5rem 2.5rem;
     }
-  }
 
-  &__close-text {
-    line-height: 1;
+    @include m.min-width(md) {
+      @include m.scrollbar-vertical(
+        var(--accent),
+        transparent,
+        rgba(255, 255, 255, 0.9)
+      );
+    }
   }
 
   &__header {
     display: flex;
-    align-items: center;
-    gap: 2rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+    margin: 0 0 2rem;
     padding-bottom: 2rem;
-    margin-bottom: 2rem;
-    border-bottom: 0.1rem solid rgba(111, 34, 185, 0.12);
-    background: linear-gradient(
-      180deg,
-      rgba(248, 247, 250, 0.6) 0%,
-      rgba(255, 255, 255, 0) 100%
-    );
-    border-radius: 0 0 1.2rem 1.2rem;
-    margin: 0 -0.5rem 2rem;
-    padding: 0 0.5rem 2rem 0.5rem;
+    border-bottom: 0.1rem solid rgba(255, 255, 255, 0.1);
 
-    @include m.max-width(sm) {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 1.5rem;
-      padding-bottom: 1.5rem;
-      margin-bottom: 1.5rem;
+    @include m.min-width(sm) {
+      flex-direction: row;
+      align-items: center;
+      gap: 2rem;
     }
   }
 
   &__header-media {
     flex-shrink: 0;
-    width: 10rem;
-    height: 10rem;
+    width: 8rem;
+    height: 8rem;
 
-    @include m.max-width(sm) {
-      width: 8rem;
-      height: 8rem;
+    @include m.min-width(sm) {
+      width: 10rem;
+      height: 10rem;
     }
 
     img {
       display: block;
       width: 100%;
       height: 100%;
-      border-radius: 1.2rem;
+      border-radius: 1.6rem;
       object-fit: cover;
-      border: 0.2rem solid rgba(111, 34, 185, 0.2);
-      box-shadow:
-        0 0.4rem 1.2rem rgba(111, 34, 185, 0.1),
-        0 0.2rem 0.6rem rgba(0, 0, 0, 0.06);
+      border: 0.2rem solid var(--accent);
     }
   }
 
@@ -309,37 +226,21 @@ defineEmits<{
     margin: 0 0 0.35em;
     font-size: clamp(2.6rem, 4vw, 3.6rem);
     font-weight: 700;
-    color: #1a1a1a;
+    color: #fff;
     letter-spacing: -0.02em;
   }
 
   &__subtitle {
     margin: 0;
     font-size: clamp(1.5rem, 2vw, 1.7rem);
-    font-weight: 600;
-    color: #555;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.65);
     line-height: 1.4;
   }
 
   &__body {
     font-size: 1.5rem;
     line-height: 1.65;
-    color: #333;
-
-    :deep(p) {
-      margin: 0 0 1em;
-    }
-
-    :deep(a) {
-      color: #6f22b9;
-      text-decoration: none;
-      font-weight: 600;
-      border-bottom: 0.1rem solid currentColor;
-
-      &:hover {
-        color: #3a3d98;
-      }
-    }
   }
 
   &__list {
@@ -389,6 +290,24 @@ defineEmits<{
 
     :deep(strong) {
       color: #1a1a1a;
+    }
+  }
+}
+
+// Zero-specificity defaults, so section components can override them
+:where(.content-section__body) {
+  p {
+    margin: 0 0 1em;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+    border-bottom: 0.1rem solid currentColor;
+
+    &:hover {
+      color: #fff;
     }
   }
 }

@@ -1,15 +1,7 @@
 <template>
-  <li
-    class="technologia"
-    :class="{ 'technologia--main': isMain }"
-    :style="animationStyle"
-  >
-    <div class="technologia__item-back">
-      <img :src="src" :alt="title" loading="lazy" />
-    </div>
-    <div class="technologia__item-front">
-      <span class="technologia__item-front-text">{{ title }}</span>
-    </div>
+  <li class="technologia" :class="{ '--main': isMain }" :style="animationStyle">
+    <img class="technologia__icon" :src="src" alt="" loading="lazy" />
+    <span class="technologia__name">{{ title }}</span>
   </li>
 </template>
 
@@ -30,90 +22,37 @@ const animationStyle = computed(() => ({
 </script>
 
 <style lang="scss">
-$size: 8rem;
-$border-color: #e0dde8;
-$accent-color: #6f22b9;
-
 .technologia {
-  position: relative;
-  height: $size;
-  width: $size;
-  margin: 0.8rem;
-  border: 0.1rem solid $border-color;
-  border-radius: 1.2rem;
-  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  width: 9.6rem;
+  min-height: 9.6rem;
+  padding: 1.4rem 0.8rem 1rem;
+  border-radius: 1.6rem;
+  background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 0.1rem solid color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow: 0 1.2rem 3rem color-mix(in srgb, var(--accent) 25%, transparent);
   opacity: 0;
-  animation: technologiaFadeIn 0.4s ease forwards;
 
-  &--main {
-    border-color: rgba(111, 34, 185, 0.4);
-    box-shadow: 0 0 0 0.15rem rgba(111, 34, 185, 0.15);
-
-    .technologia__item-front-text {
-      color: #6f22b9;
-      font-weight: 700;
-    }
+  &.--main {
+    border-color: var(--accent);
   }
 
-  &:hover {
-    .technologia__item-back {
-      transform: rotate3d(0, 1, 0, 180deg);
-    }
-
-    .technologia__item-front {
-      transform: rotate3d(0, 1, 0, 0deg);
-    }
-  }
-
-  &__item-back,
-  &__item-front {
-    position: absolute;
-    inset: 0;
-    width: $size;
-    height: $size;
-    border-radius: 1.2rem;
-    transition: transform 0.8s ease;
-    backface-visibility: hidden;
-  }
-
-  &__item-back {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-  }
-
-  &__item-front {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transform: rotate3d(0, 1, 0, 180deg);
-
-    &-text {
-      margin: 0;
-      font-size: 1.4rem;
-      line-height: 1.2;
-      color: $accent-color;
-      font-weight: 600;
-      text-align: center;
-    }
-  }
-
-  img {
-    max-height: 100%;
-    max-width: 100%;
-    width: auto;
-    height: auto;
-    vertical-align: middle;
+  &__icon {
+    width: 3.6rem;
+    height: 3.6rem;
     object-fit: contain;
   }
-}
-</style>
 
-<style lang="scss">
-@keyframes technologiaFadeIn {
-  to {
-    opacity: 1;
+  &__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    color: #fff;
   }
 }
 </style>

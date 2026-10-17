@@ -155,7 +155,7 @@
     padding: 0;
     font-size: 1.5rem;
     line-height: 1.4;
-    color: #333;
+    color: rgba(255, 255, 255, 0.85);
 
     &:last-child {
       margin-bottom: 0;
@@ -234,7 +234,7 @@
   &__label-text {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #555;
+    color: rgba(255, 255, 255, 0.65);
   }
 
   &__input {

@@ -2,6 +2,7 @@
 export interface GlobalSettingNavItem {
   id: number
   label: string
+  slug?: string
 }
 
 /** Menu structure from Strapi */

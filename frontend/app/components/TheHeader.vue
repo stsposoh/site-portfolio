@@ -1,45 +1,43 @@
 <script lang="ts" setup>
 import SplitType from 'split-type'
 import anime from 'animejs'
+import { prefersReducedMotion } from '~/utils/motion'
+
+const props = defineProps<{
+  revealed?: boolean
+}>()
 
 const { data: globalSettings } = useGlobalSettings()
 
-const isPageLoaded = ref<boolean>(false)
+let chars: HTMLElement[] = []
 
-onMounted(() => {
-  new SplitType('.header__title', { types: 'chars' })
-  new SplitType('.header__text', { types: 'chars' })
-
-  isPageLoaded.value = true
-
-  const tl = anime.timeline({
-    easing: 'easeOutExpo'
-  })
-
-  tl.add({
-    targets: '.header__title .char',
+function revealText() {
+  anime({
+    targets: chars,
     opacity: [0, 1],
     rotateY: [90, 0],
     easing: 'easeOutQuad',
-    delay: anime.stagger(100),
-    duration: 400
-  }).add(
-    {
-      targets: '.header__text .char',
-      opacity: [0, 1],
-      rotateY: [90, 0],
-      easing: 'easeOutQuad',
-      delay: anime.stagger(60),
-      duration: 200
-    },
-    '-=400'
-  )
+    delay: anime.stagger(prefersReducedMotion() ? 0 : 40),
+    duration: prefersReducedMotion() ? 1 : 300
+  })
+}
+
+onMounted(() => {
+  chars = new SplitType('.header__text', { types: 'chars' }).chars ?? []
+  if (props.revealed) revealText()
 })
+
+watch(
+  () => props.revealed,
+  (revealed) => {
+    if (revealed) revealText()
+  }
+)
 </script>
 
 <template>
   <header class="header">
-    <div v-show="isPageLoaded" class="header__inner">
+    <div class="header__inner" :class="{ '--revealed': revealed }">
       <h1 class="header__title">
         {{ globalSettings?.headerTitle }}
       </h1>
@@ -72,9 +70,20 @@ onMounted(() => {
     @include m.max-width(sm) {
       padding: 1.2rem 1.2rem;
     }
+
+    &.--revealed {
+      .header__title {
+        visibility: visible;
+      }
+
+      .header__text {
+        opacity: 1;
+      }
+    }
   }
 
   &__title {
+    visibility: hidden;
     font-weight: 600;
     font-size: 2.4rem;
     margin: 0 1.5rem 0 0;
@@ -86,6 +95,7 @@ onMounted(() => {
   }
 
   &__text {
+    opacity: 0;
     font-size: 1.4rem;
     font-weight: 400;
 
@@ -94,11 +104,8 @@ onMounted(() => {
     }
   }
 
-  &__title,
-  &__text {
-    .char {
-      opacity: 0;
-    }
+  &__text .char {
+    opacity: 0;
   }
 }
 </style>
