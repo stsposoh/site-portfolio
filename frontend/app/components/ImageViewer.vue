@@ -164,15 +164,34 @@ function onSwipeEnd(e: PointerEvent) {
   if (distance < -SWIPE_THRESHOLD) go(1)
 }
 
-/** Transform that places the image over the thumbnail it was opened from */
-function originTransform(img: HTMLElement): string | null {
+/** Long screenshots fly as their scroll frame, everything else as the image itself */
+const flyingElement = (viewer: HTMLElement) =>
+  viewer.querySelector<HTMLElement>(
+    props.scrollable ? '.image-viewer__content' : '.image-viewer__img'
+  )
+
+/** Keyframe that places the flying element over the thumbnail it was opened from */
+function originKeyframe(el: HTMLElement): Keyframe | null {
   const origin = props.originRect
-  const rect = img.getBoundingClientRect()
+  const rect = el.getBoundingClientRect()
   if (!origin || !rect.width) return null
+
+  const scale = origin.width / rect.width
+
+  // Long screenshots are shown from the top both in the card and in the viewer
+  if (props.scrollable) {
+    return {
+      transform: `translate(${origin.left - rect.left}px, ${origin.top - rect.top}px) scale(${scale})`,
+      transformOrigin: '0 0'
+    }
+  }
 
   const dx = origin.left + origin.width / 2 - (rect.left + rect.width / 2)
   const dy = origin.top + origin.height / 2 - (rect.top + rect.height / 2)
-  return `translate(${dx}px, ${dy}px) scale(${origin.width / rect.width})`
+  return {
+    transform: `translate(${dx}px, ${dy}px) scale(${scale})`,
+    transformOrigin: '50% 50%'
+  }
 }
 
 const animationDuration = (ms: number) => (prefersReducedMotion() ? 1 : ms)
@@ -185,21 +204,22 @@ async function onEnter(el: Element, done: () => void) {
   })
 
   const img = viewer.querySelector<HTMLImageElement>('.image-viewer__img')
-  if (!img) return done()
+  const flying = flyingElement(viewer)
+  if (!img || !flying) return done()
 
   img.style.opacity = '0'
   await img.decode().catch(() => {})
   img.style.opacity = ''
 
-  const from = originTransform(img)
+  const from = originKeyframe(flying)
   const keyframes = from
-    ? [{ transform: from }, { transform: 'none' }]
+    ? [from, { transform: 'none', transformOrigin: from.transformOrigin }]
     : [
         { transform: 'scale(0.95)', opacity: 0 },
         { transform: 'none', opacity: 1 }
       ]
 
-  img
+  flying
     .animate(keyframes, {
       duration: animationDuration(from ? 550 : 250),
       easing: EASING
@@ -209,20 +229,23 @@ async function onEnter(el: Element, done: () => void) {
 
 function onLeave(el: Element, done: () => void) {
   const viewer = el as HTMLElement
-  const img = viewer.querySelector<HTMLImageElement>('.image-viewer__img')
-  const to = img ? originTransform(img) : null
+  const flying = flyingElement(viewer)
+  const to = flying ? originKeyframe(flying) : null
+  const duration = animationDuration(to ? 450 : 250)
 
-  viewer.animate([{ opacity: 1 }, { opacity: 0 }], {
-    duration: animationDuration(to ? 450 : 250),
-    easing: 'ease',
-    fill: 'forwards'
-  }).finished.then(done, done)
+  viewer
+    .animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration,
+      easing: 'ease',
+      fill: 'forwards'
+    })
+    .finished.then(done, done)
 
-  img?.animate(
+  flying?.animate(
     to
-      ? [{ transform: 'none' }, { transform: to }]
+      ? [{ transform: 'none', transformOrigin: to.transformOrigin }, to]
       : [{ transform: 'none' }, { transform: 'scale(0.95)' }],
-    { duration: animationDuration(to ? 450 : 250), easing: EASING, fill: 'forwards' }
+    { duration, easing: EASING, fill: 'forwards' }
   )
 }
 
@@ -231,6 +254,7 @@ watch(
   (src, previous) => {
     if (!props.open || !previous || !src) return
     nextTick(() => {
+      document.querySelector('.image-viewer__content')?.scrollTo(0, 0)
       document.querySelector('.image-viewer__img')?.animate(
         [
           { opacity: 0, transform: `translateX(${lastDirection * 4}rem)` },

@@ -1,15 +1,8 @@
-interface StrapiImageFormat {
-  url: string
-  width: number
-}
+import { buildSrcset, type StrapiImage } from '~/utils/strapiImage'
 
 interface StrapiCertificate {
   id: number
-  image: StrapiImageFormat & {
-    height: number
-    alternativeText?: string
-    formats?: Record<string, StrapiImageFormat>
-  }
+  image: StrapiImage
   category?: {
     name: string
   }
@@ -47,21 +40,15 @@ export function useCertificates() {
   )
 
   const certificates = computed<Certificate[]>(() =>
-    (response.value?.data ?? []).map(({ id, image, category }) => {
-      const sources = [...Object.values(image.formats ?? {}), image]
-        .sort((a, b) => a.width - b.width)
-        .map((source) => `${apiUrl}${source.url} ${source.width}w`)
-
-      return {
-        id,
-        category: category?.name ?? '',
-        alt: image.alternativeText ?? '',
-        src: `${apiUrl}${image.url}`,
-        srcset: sources.join(', '),
-        width: image.width,
-        height: image.height
-      }
-    })
+    (response.value?.data ?? []).map(({ id, image, category }) => ({
+      id,
+      category: category?.name ?? '',
+      alt: image.alternativeText ?? '',
+      src: `${apiUrl}${image.url}`,
+      srcset: buildSrcset(apiUrl, image),
+      width: image.width,
+      height: image.height
+    }))
   )
 
   const categories = computed(() => [

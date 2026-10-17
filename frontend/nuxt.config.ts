@@ -1,5 +1,3 @@
-import { fileURLToPath } from 'node:url'
-
 export default defineNuxtConfig({
   compatibilityDate: '2026-02-15',
 
@@ -18,10 +16,6 @@ export default defineNuxtConfig({
   },
 
   modules: ['nuxt-strapi-blocks-renderer'],
-
-  alias: {
-    '~/data': fileURLToPath(new URL('./app/data', import.meta.url))
-  },
 
   css: ['@/assets/scss/main.scss'],
 

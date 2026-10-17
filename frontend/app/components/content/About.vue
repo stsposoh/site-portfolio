@@ -119,7 +119,6 @@
 
 <script lang="ts" setup>
 import anime from 'animejs'
-import { portfolioItems } from '~/data/portfolio'
 import { pluralWord } from '~/utils/pluralize'
 import { prefersReducedMotion } from '~/utils/motion'
 import { applyTilt, resetTilt } from '~/utils/tilt'
@@ -127,6 +126,7 @@ import { applyTilt, resetTilt } from '~/utils/tilt'
 const { aboutBlock } = useLandingPage()
 const { experienceText, experienceYears } = useExperience()
 const { certificates } = useCertificates()
+const { projects } = useProjects()
 const isActive = useSectionActive()
 
 const rootEl = ref<HTMLElement | null>(null)
@@ -146,9 +146,9 @@ const stats = computed(() => [
     title: experienceText.value
   },
   {
-    value: portfolioItems.length,
+    value: projects.value.length,
     suffix: '',
-    label: `${pluralWord(portfolioItems.length, ['проект', 'проекта', 'проектов'])} в портфолио`
+    label: `${pluralWord(projects.value.length, ['проект', 'проекта', 'проектов'])} в портфолио`
   },
   {
     value: certificates.value.length,
