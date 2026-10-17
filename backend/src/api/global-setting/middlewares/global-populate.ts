@@ -15,7 +15,7 @@ const populate = {
   menu: {
     populate: {
       navItems: {
-        fields: ["label"],
+        fields: ["label", "slug"],
       },
     },
   },
