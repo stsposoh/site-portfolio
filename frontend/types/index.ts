@@ -8,18 +8,6 @@ export interface PortfolioItem {
   desc: string
 }
 
-/** Certificate category for filtering */
-export type CertCategory = 'Курсы' | 'Тесты' | 'Разное'
-
-/** Certificate item */
-export interface Cert {
-  id: number
-  thumbSrc: string
-  fullSrc: string
-  alt: string
-  category: CertCategory
-}
-
 /** Individual skill/technology */
 export interface Skill {
   src: string

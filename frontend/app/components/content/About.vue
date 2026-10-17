@@ -5,7 +5,7 @@
         v-if="heading?.image"
         class="about__photo"
         data-reveal
-        @pointermove="tilt"
+        @pointermove="applyTilt"
         @pointerleave="resetTilt"
       >
         <img
@@ -120,12 +120,13 @@
 <script lang="ts" setup>
 import anime from 'animejs'
 import { portfolioItems } from '~/data/portfolio'
-import { certificatesData } from '~/data/certificates'
 import { pluralWord } from '~/utils/pluralize'
 import { prefersReducedMotion } from '~/utils/motion'
+import { applyTilt, resetTilt } from '~/utils/tilt'
 
 const { aboutBlock } = useLandingPage()
 const { experienceText, experienceYears } = useExperience()
+const { certificates } = useCertificates()
 const isActive = useSectionActive()
 
 const rootEl = ref<HTMLElement | null>(null)
@@ -150,9 +151,9 @@ const stats = computed(() => [
     label: `${pluralWord(portfolioItems.length, ['проект', 'проекта', 'проектов'])} в портфолио`
   },
   {
-    value: certificatesData.length,
+    value: certificates.value.length,
     suffix: '',
-    label: pluralWord(certificatesData.length, [
+    label: pluralWord(certificates.value.length, [
       'сертификат',
       'сертификата',
       'сертификатов'
@@ -237,23 +238,6 @@ function reset() {
 }
 
 watch(isActive, (active) => (active ? reveal() : reset()))
-
-function tilt(event: PointerEvent) {
-  if (event.pointerType !== 'mouse' || prefersReducedMotion()) return
-
-  const el = event.currentTarget as HTMLElement
-  const rect = el.getBoundingClientRect()
-  const x = (event.clientX - rect.left) / rect.width - 0.5
-  const y = (event.clientY - rect.top) / rect.height - 0.5
-  el.style.setProperty('--tilt-x', `${(-y * 14).toFixed(2)}deg`)
-  el.style.setProperty('--tilt-y', `${(x * 14).toFixed(2)}deg`)
-}
-
-function resetTilt(event: PointerEvent) {
-  const el = event.currentTarget as HTMLElement
-  el.style.removeProperty('--tilt-x')
-  el.style.removeProperty('--tilt-y')
-}
 </script>
 
 <style lang="scss">
