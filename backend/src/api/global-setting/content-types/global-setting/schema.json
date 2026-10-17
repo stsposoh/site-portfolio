@@ -57,8 +57,10 @@
       "component": "layout.main-menu",
       "repeatable": false
     },
-    "backButtonLabel": {
-      "type": "string",
+    "ui": {
+      "type": "component",
+      "component": "layout.ui-labels",
+      "repeatable": false,
       "pluginOptions": {
         "i18n": {
           "localized": true

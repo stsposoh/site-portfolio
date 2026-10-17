@@ -12,13 +12,23 @@
   "attributes": {
     "name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "certificates": {
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::certificate.certificate",
       "mappedBy": "category"
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

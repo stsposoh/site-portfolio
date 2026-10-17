@@ -14,13 +14,30 @@
       "type": "media",
       "multiple": false,
       "required": true,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
     },
     "category": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "api::certificate-category.certificate-category",
-      "inversedBy": "certificates"
+      "inversedBy": "certificates",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    }
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
     }
   }
 }

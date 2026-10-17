@@ -34,6 +34,36 @@
         "blocks.about",
         "blocks.skills"
       ]
+    },
+    "certificatesHeading": {
+      "type": "component",
+      "component": "shared.section-heading",
+      "repeatable": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "portfolioHeading": {
+      "type": "component",
+      "component": "shared.section-heading",
+      "repeatable": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "contactsHeading": {
+      "type": "component",
+      "component": "shared.section-heading",
+      "repeatable": false,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

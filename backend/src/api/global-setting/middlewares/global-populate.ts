@@ -10,7 +10,6 @@ const populate = {
     "description",
     "headerTitle",
     "headerPosition",
-    "backButtonLabel",
   ],
   menu: {
     populate: {
@@ -19,6 +18,7 @@ const populate = {
       },
     },
   },
+  ui: true,
 };
 
 export default (config, { strapi }: { strapi: Core.Strapi }) => {

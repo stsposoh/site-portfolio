@@ -29,6 +29,15 @@
       "type": "component",
       "component": "shared.info-card",
       "repeatable": true
+    },
+    "experienceLabel": {
+      "type": "string"
+    },
+    "projectsLabel": {
+      "type": "string"
+    },
+    "certificatesLabel": {
+      "type": "string"
     }
   },
   "config": {}

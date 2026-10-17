@@ -4,11 +4,23 @@
 
 import type { Core } from "@strapi/strapi";
 
+const heading = { populate: { image: true } };
+
 const populate = {
+  certificatesHeading: heading,
+  portfolioHeading: heading,
+  contactsHeading: heading,
   blocks: {
     on: {
       "blocks.about": {
-        fields: ["shortText", "stackText", "content"],
+        fields: [
+          "shortText",
+          "stackText",
+          "content",
+          "experienceLabel",
+          "projectsLabel",
+          "certificatesLabel",
+        ],
         populate: {
           heading: { populate: { image: true } },
           stackItems: true,

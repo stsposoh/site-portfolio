@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_layout_ui_labels",
+  "info": {
+    "displayName": "UI Labels",
+    "icon": "message"
+  },
+  "options": {},
+  "attributes": {
+    "allLabel": {
+      "type": "string"
+    },
+    "copyLabel": {
+      "type": "string"
+    },
+    "copiedLabel": {
+      "type": "string"
+    },
+    "closeLabel": {
+      "type": "string"
+    },
+    "previousImageLabel": {
+      "type": "string"
+    },
+    "nextImageLabel": {
+      "type": "string"
+    },
+    "imageViewerLabel": {
+      "type": "string"
+    },
+    "visitSiteLabel": {
+      "type": "string"
+    },
+    "languageLabel": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

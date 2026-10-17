@@ -7,9 +7,12 @@ export interface BlocksAbout extends Struct.ComponentSchema {
     icon: 'grid';
   };
   attributes: {
+    certificatesLabel: Schema.Attribute.String;
     content: Schema.Attribute.Blocks;
+    experienceLabel: Schema.Attribute.String;
     heading: Schema.Attribute.Component<'shared.section-heading', false>;
     infoCards: Schema.Attribute.Component<'shared.info-card', true>;
+    projectsLabel: Schema.Attribute.String;
     shortText: Schema.Attribute.String;
     stackItems: Schema.Attribute.Component<'shared.text-items', true>;
     stackText: Schema.Attribute.String;
@@ -35,6 +38,25 @@ export interface LayoutMainMenu extends Struct.ComponentSchema {
   };
   attributes: {
     navItems: Schema.Attribute.Component<'shared.link', true>;
+  };
+}
+
+export interface LayoutUiLabels extends Struct.ComponentSchema {
+  collectionName: 'components_layout_ui_labels';
+  info: {
+    displayName: 'UI Labels';
+    icon: 'message';
+  };
+  attributes: {
+    allLabel: Schema.Attribute.String;
+    closeLabel: Schema.Attribute.String;
+    copiedLabel: Schema.Attribute.String;
+    copyLabel: Schema.Attribute.String;
+    imageViewerLabel: Schema.Attribute.String;
+    languageLabel: Schema.Attribute.String;
+    nextImageLabel: Schema.Attribute.String;
+    previousImageLabel: Schema.Attribute.String;
+    visitSiteLabel: Schema.Attribute.String;
   };
 }
 
@@ -140,6 +162,7 @@ declare module '@strapi/strapi' {
       'blocks.about': BlocksAbout;
       'blocks.skills': BlocksSkills;
       'layout.main-menu': LayoutMainMenu;
+      'layout.ui-labels': LayoutUiLabels;
       'shared.contact-item': SharedContactItem;
       'shared.info-card': SharedInfoCard;
       'shared.key-value': SharedKeyValue;
