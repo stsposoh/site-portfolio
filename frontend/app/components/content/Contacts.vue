@@ -1,290 +1,313 @@
 <template>
   <div class="contacts">
-    <div class="contacts__info">
-      <p class="contacts__row">
-        <span class="contacts__icon" aria-hidden="true">
-          <img src="/icons/contacts/map.svg" alt="" width="20" height="20" />
-        </span>
-        Украина
-      </p>
-      <p class="contacts__row">
-        <span class="contacts__icon" aria-hidden="true">
-          <img src="/icons/contacts/phone.svg" alt="" width="20" height="20" />
-        </span>
-        <a href="tel:+380992707615">+38 (099) 270-76-15</a>
-      </p>
-      <p class="contacts__row">
-        <span class="contacts__icon" aria-hidden="true">
-          <img
-            src="/icons/contacts/gmail_mail.svg"
-            alt=""
-            width="20"
-            height="20"
-          />
-        </span>
-        <a href="mailto:stsposoh@gmail.com">stsposoh@gmail.com</a>
-      </p>
-      <p class="contacts__row">
-        <span class="contacts__icon" aria-hidden="true">
-          <img src="/icons/contacts/skype.svg" alt="" width="20" height="20" />
-        </span>
-        <a href="skype:stas.posohov?chat">stas.posohov</a>
-      </p>
-      <p class="contacts__row">
-        <span class="contacts__icon" aria-hidden="true">
-          <img
-            src="/icons/contacts/telegram.svg"
-            alt=""
-            width="20"
-            height="20"
-          />
-        </span>
-        <a href="https://t.me/posohov" target="_blank" rel="noopener noreferrer"
-          >@posohov</a
-        >
-      </p>
-
-      <div class="contacts__social">
-        <a
-          class="contacts__social-link"
-          href="https://github.com/stsposoh"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="GitHub"
-        >
-          <img
-            src="/icons/contacts/GitHub%20circle.svg"
-            alt="GitHub"
-            width="24"
-            height="24"
-          />
-        </a>
-        <a
-          class="contacts__social-link"
-          href="https://ru.linkedin.com/in/sposokhov"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="LinkedIn"
-        >
-          <img
-            src="/icons/contacts/Linked%20in.svg"
-            alt="LinkedIn"
-            width="24"
-            height="24"
-          />
-        </a>
-      </div>
-    </div>
-
-    <div class="contacts__form-wrap">
-      <form
-        class="contacts__form"
-        action="https://formspree.io/stsposoh@gmail.com"
-        method="POST"
-        target="_blank"
+    <TransitionGroup
+      v-if="revealCount > 0"
+      :key="revealCount"
+      tag="ul"
+      name="list-item"
+      class="contacts__list"
+      appear
+    >
+      <li
+        v-for="(contact, index) in contacts"
+        :key="contact.id"
+        class="contacts__item"
+        :class="{ '--link': contact.url }"
+        :style="{ '--i': index }"
       >
-        <label class="contacts__label">
-          <span class="contacts__label-text">Имя</span>
-          <input
-            type="text"
-            name="name"
-            class="contacts__input"
-            placeholder="Ваше имя"
-            required
+        <span class="contacts__icon" aria-hidden="true">
+          <img
+            v-if="contact.icon"
+            :src="contact.icon"
+            alt=""
+            width="24"
+            height="24"
           />
-        </label>
-        <label class="contacts__label">
-          <span class="contacts__label-text">Email</span>
-          <input
-            type="email"
-            name="email"
-            class="contacts__input"
-            placeholder="your@email.com"
-            required
-          />
-        </label>
-        <label class="contacts__label">
-          <span class="contacts__label-text">Сообщение</span>
-          <textarea
-            name="message"
-            class="contacts__input contacts__textarea"
-            rows="4"
-            placeholder="Ваше сообщение"
-            required
-          />
-        </label>
-        <button type="submit" class="contacts__submit">Отправить</button>
-      </form>
-    </div>
+        </span>
+
+        <span class="contacts__text">
+          <span class="contacts__label">{{ contact.label }}</span>
+          <a
+            v-if="contact.url"
+            :href="contact.url"
+            class="contacts__value"
+            v-bind="isExternal(contact.url) ? externalLinkAttrs : {}"
+            >{{ contact.value }}</a
+          >
+          <span v-else class="contacts__value">{{ contact.value }}</span>
+        </span>
+
+        <button
+          v-if="contact.copyable"
+          type="button"
+          class="contacts__copy"
+          :class="{ '--copied': copiedId === contact.id }"
+          :aria-label="`Скопировать: ${contact.value}`"
+          @click="copy(contact)"
+        >
+          <svg
+            v-if="copiedId === contact.id"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M20 6 9 17l-5-5" />
+          </svg>
+          <svg
+            v-else
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="9" y="9" width="12" height="12" rx="2" />
+            <path d="M5 15V5a2 2 0 0 1 2-2h10" />
+          </svg>
+          <span class="contacts__copy-tooltip" role="status">
+            {{ copiedId === contact.id ? 'Скопировано' : '' }}
+          </span>
+        </button>
+      </li>
+    </TransitionGroup>
   </div>
 </template>
 
 <script lang="ts" setup>
-// Contacts section - static content, form submits to Formspree
+import type { ContactItem } from '~/composables/useContacts'
+
+const COPIED_TIMEOUT = 1600
+
+const { contacts } = useContacts()
+const isActive = useSectionActive()
+
+const copiedId = ref<number | null>(null)
+let copiedTimer: ReturnType<typeof setTimeout> | undefined
+
+// Remounting the list on every open replays the cascade
+const revealCount = ref(0)
+
+const externalLinkAttrs = { target: '_blank', rel: 'noopener noreferrer' }
+const isExternal = (url: string) => /^https?:/.test(url)
+
+async function copy(contact: ContactItem) {
+  try {
+    await navigator.clipboard.writeText(contact.value)
+  } catch {
+    return
+  }
+
+  copiedId.value = contact.id
+  clearTimeout(copiedTimer)
+  copiedTimer = setTimeout(() => (copiedId.value = null), COPIED_TIMEOUT)
+}
+
+watch(isActive, (active) => {
+  if (active) revealCount.value++
+})
+
+onBeforeUnmount(() => clearTimeout(copiedTimer))
 </script>
 
 <style lang="scss">
 .contacts {
-  display: grid;
-  gap: 2rem;
+  &__list {
+    --columns: 1;
+    --gap: 1.2rem;
 
-  @include m.min-width(lg) {
-    grid-template-columns: 1fr 1fr;
-    align-items: start;
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    @include m.min-width(sm) {
+      --columns: 2;
+    }
+
+    @include m.min-width(lg) {
+      --columns: 3;
+      --gap: 1.6rem;
+    }
   }
 
-  &__info {
-    a {
-      color: inherit;
-      text-decoration: none;
-      border-bottom: 0.1rem solid transparent;
-      transition: color 0.2s, border-color 0.2s;
+  &__item {
+    position: relative;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 1.2rem;
+    width: calc(
+      (100% - (var(--columns) - 1) * var(--gap)) / var(--columns)
+    );
+    padding: 1.4rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 0.1rem solid rgba(255, 255, 255, 0.12);
+    border-radius: 1.6rem;
+    transition:
+      transform 0.4s cubic-bezier(0.2, 1, 0.3, 1),
+      border-color 0.3s,
+      box-shadow 0.4s;
 
-      &:hover {
-        color: v.$color-accent-mint;
-        border-bottom-color: v.$color-accent-mint;
+    @include m.min-width(sm) {
+      gap: 1.4rem;
+      padding: 1.6rem 1.8rem;
+    }
+
+    &.--link:hover,
+    &.--link:focus-within {
+      transform: translateY(-0.3rem);
+      border-color: var(--accent);
+      box-shadow: 0 1.4rem 3.6rem
+        color-mix(in srgb, var(--accent) 22%, transparent);
+
+      .contacts__icon {
+        background-color: color-mix(in srgb, var(--accent) 22%, transparent);
       }
     }
   }
 
-  &__row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin: 0 0 1rem;
-    padding: 0;
-    font-size: 1.5rem;
-    line-height: 1.4;
-    color: rgba(255, 255, 255, 0.85);
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
   &__icon {
+    display: flex;
     flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.2rem;
-    height: 3.2rem;
-
-    img {
-      width: 2rem;
-      height: 2rem;
-      object-fit: contain;
-      filter: brightness(0) saturate(100%);
-    }
-  }
-
-  &__social {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1.25rem;
-  }
-
-  &__social-link {
-    display: flex;
     align-items: center;
     justify-content: center;
     width: 4rem;
     height: 4rem;
-    background: #f0eef5;
-    border: 0.1rem solid v.$color-border;
-    border-radius: 1rem;
-    color: #333;
-    transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    transition: background-color 0.3s;
 
-    &:hover {
-      background: #e8f5f1;
-      border-color: rgba(7, 216, 157, 0.35);
-      box-shadow: 0 0.2rem 0.8rem rgba(7, 216, 157, 0.12);
-    }
-
-    &:focus {
-      outline: none;
-      box-shadow: 0 0 0 0.2rem rgba(7, 216, 157, 0.3);
+    @include m.min-width(sm) {
+      width: 4.8rem;
+      height: 4.8rem;
     }
 
     img {
       width: 2.4rem;
       height: 2.4rem;
       object-fit: contain;
-      filter: brightness(0) saturate(100%);
     }
   }
 
-  &__form-wrap {
+  &__text {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.2rem;
     min-width: 0;
   }
 
-  &__form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
   &__label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.35rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.5);
   }
 
-  &__label-text {
+  &__value {
     font-size: 1.5rem;
     font-weight: 600;
-    color: rgba(255, 255, 255, 0.65);
-  }
-
-  &__input {
-    width: 100%;
-    min-height: 4.4rem;
-    padding: 1rem 1.4rem;
-    font-size: 1.6rem;
-    color: #1a1a1a;
-    background: #fff;
-    border: 0.1rem solid v.$color-border;
-    border-radius: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-
-    &::placeholder {
-      color: #999;
-    }
-
-    &:focus {
-      outline: none;
-      border-color: v.$color-accent-mint;
-      box-shadow: 0 0 0 0.3rem rgba(v.$color-accent-mint, 0.15);
-    }
-  }
-
-  &__textarea {
-    min-height: 12rem;
-    resize: vertical;
-  }
-
-  &__submit {
-    min-height: 4.4rem;
-    padding: 1rem 2rem;
-    font-size: 1.6rem;
-    font-weight: 700;
     color: #fff;
-    background: linear-gradient(135deg, #07d89d, #1d6449);
-    border: none;
-    border-radius: 1rem;
-    cursor: pointer;
-    transition: filter 0.2s, box-shadow 0.2s;
+    overflow-wrap: anywhere;
+
+    @include m.min-width(sm) {
+      font-size: 1.6rem;
+    }
+  }
+
+  a.contacts__value {
+    border-bottom: none;
+
+    // Stretches the link over the whole tile
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+    }
 
     &:hover {
-      filter: brightness(1.05);
-      box-shadow: 0 0.4rem 1.2rem rgba(7, 216, 157, 0.35);
+      color: #fff;
     }
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 0 0.3rem rgba(v.$color-accent-mint, 0.4);
     }
+  }
+
+  &__copy {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 3.6rem;
+    height: 3.6rem;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.75);
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 0.1rem solid rgba(255, 255, 255, 0.14);
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      color 0.3s,
+      background-color 0.3s,
+      border-color 0.3s;
+
+    &.--copied {
+      color: #fff;
+      background-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      border-color: var(--accent);
+
+      .contacts__copy-tooltip {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  &__copy-tooltip {
+    position: absolute;
+    bottom: calc(100% + 0.8rem);
+    left: 50%;
+    padding: 0.4rem 0.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
+    color: #0a0816;
+    background-color: var(--accent);
+    border-radius: 0.6rem;
+    opacity: 0;
+    transform: translate(-50%, 0.4rem);
+    transition:
+      opacity 0.2s,
+      transform 0.2s;
+    pointer-events: none;
   }
 }
 </style>
