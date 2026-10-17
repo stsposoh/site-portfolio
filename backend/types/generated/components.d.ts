@@ -38,6 +38,21 @@ export interface LayoutMainMenu extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedContactItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_contact_items';
+  info: {
+    displayName: 'Contact Item';
+    icon: 'phone';
+  };
+  attributes: {
+    copyable: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    icon: Schema.Attribute.Media<'images'>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    url: Schema.Attribute.String;
+    value: Schema.Attribute.String;
+  };
+}
+
 export interface SharedInfoCard extends Struct.ComponentSchema {
   collectionName: 'components_shared_info_cards';
   info: {
@@ -125,6 +140,7 @@ declare module '@strapi/strapi' {
       'blocks.about': BlocksAbout;
       'blocks.skills': BlocksSkills;
       'layout.main-menu': LayoutMainMenu;
+      'shared.contact-item': SharedContactItem;
       'shared.info-card': SharedInfoCard;
       'shared.key-value': SharedKeyValue;
       'shared.link': SharedLink;
