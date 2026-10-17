@@ -1,12 +1,9 @@
-import { formatYears, formatMonths } from '~/utils/pluralize'
-
 const CAREER_START = new Date(2016, 0, 1)
 
-/**
- * Calculates years and months of experience since career start
- * and formats them with correct Russian grammatical cases
- */
+/** Years and months since career start, plus a localized "10 years and 9 months" text */
 export function useExperience() {
+  const { locale } = useI18n()
+
   const experience = computed(() => {
     const now = new Date()
     let years = now.getFullYear() - CAREER_START.getFullYear()
@@ -20,10 +17,21 @@ export function useExperience() {
     return { years, months }
   })
 
-  const experienceText = computed(
-    () =>
-      `${formatYears(experience.value.years)}${formatMonths(experience.value.months)}`
-  )
+  const experienceText = computed(() => {
+    const format = (value: number, unit: 'year' | 'month') =>
+      new Intl.NumberFormat(locale.value, {
+        style: 'unit',
+        unit,
+        unitDisplay: 'long'
+      }).format(value)
+
+    const { years, months } = experience.value
+    const parts = [format(years, 'year')]
+    if (months) parts.push(format(months, 'month'))
+
+    return new Intl.ListFormat(locale.value, { type: 'conjunction' }).format(parts)
+  })
+
   const experienceYears = computed(() => experience.value.years)
 
   return { experienceText, experienceYears }

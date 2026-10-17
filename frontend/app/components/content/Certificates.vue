@@ -46,9 +46,8 @@
 </template>
 
 <script lang="ts" setup>
-const ALL_LABEL = 'Показать все'
-
 const { certificates, categories } = useCertificates()
+const { ui } = useGlobalSettings()
 const isActive = useSectionActive()
 const { elements, register, capture, pin } = useLeavePinning<number>()
 
@@ -60,7 +59,7 @@ const viewerOrigin = ref<DOMRect | null>(null)
 const revealCount = ref(0)
 
 const tabs = computed(() => [
-  { label: ALL_LABEL, count: certificates.value.length },
+  { label: ui.value.allLabel ?? '', count: certificates.value.length },
   ...categories.value.map((category) => ({
     label: category,
     count: certificates.value.filter((cert) => cert.category === category)

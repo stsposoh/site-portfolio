@@ -1,50 +1,15 @@
-/**
- * Formats years with correct Russian grammatical case
- * @param n - number of years
- * @returns string like "1 год", "2 года", "5 лет"
- */
-export const formatYears = (n: number): string => {
-  const lastDigit = n % 10
-  const lastTwoDigits = n % 100
-
-  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return `${n} лет`
-  if (lastDigit === 1) return `${n} год`
-  if (lastDigit >= 2 && lastDigit <= 4) return `${n} года`
-  return `${n} лет`
-}
+const CATEGORY_ORDER = ['zero', 'one', 'two', 'few', 'many', 'other']
 
 /**
- * Formats months with correct Russian grammatical case
- * @param n - number of months
- * @returns string like " и 1 месяц", " и 2 месяца", " и 5 месяцев"
+ * Picks a plural form from a "|"-separated list given in Intl.PluralRules
+ * category order: one|few|many for Ukrainian and Russian, one|other for English
  */
-export const formatMonths = (n: number): string => {
-  if (n === 0) return ''
-
-  const lastDigit = n % 10
-  const lastTwoDigits = n % 100
-
-  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return ` и ${n} месяцев`
-  if (lastDigit === 1) return ` и ${n} месяц`
-  if (lastDigit >= 2 && lastDigit <= 4) return ` и ${n} месяца`
-  return ` и ${n} месяцев`
-}
-
-/**
- * Picks the Russian plural form for a number
- * @param n - number to agree with
- * @param forms - [one, few, many], e.g. ['проект', 'проекта', 'проектов']
- * @returns the matching form without the number
- */
-export const pluralWord = (
-  n: number,
-  [one, few, many]: [string, string, string]
-): string => {
-  const lastDigit = n % 10
-  const lastTwoDigits = n % 100
-
-  if (lastTwoDigits >= 11 && lastTwoDigits <= 14) return many
-  if (lastDigit === 1) return one
-  if (lastDigit >= 2 && lastDigit <= 4) return few
-  return many
+export function pluralForm(n: number, forms: string, locale: string): string {
+  const options = forms.split('|')
+  const rules = new Intl.PluralRules(locale)
+  const categories = [...rules.resolvedOptions().pluralCategories].sort(
+    (a, b) => CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b)
+  )
+  const index = categories.indexOf(rules.select(n))
+  return options[Math.min(index, options.length - 1)] ?? ''
 }

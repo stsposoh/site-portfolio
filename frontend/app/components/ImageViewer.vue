@@ -7,13 +7,13 @@
           class="image-viewer"
           role="dialog"
           aria-modal="true"
-          aria-label="Просмотр изображения"
+          :aria-label="ui.imageViewerLabel"
           @click.self="close"
         >
           <button
             type="button"
             class="image-viewer__button --close"
-            aria-label="Закрыть"
+            :aria-label="ui.closeLabel"
             @click="close"
           >
             <svg
@@ -34,7 +34,7 @@
             v-if="canPrev"
             type="button"
             class="image-viewer__button --prev"
-            aria-label="Предыдущее изображение"
+            :aria-label="ui.previousImageLabel"
             @click="go(-1)"
           >
             <svg
@@ -56,7 +56,7 @@
             v-if="canNext"
             type="button"
             class="image-viewer__button --next"
-            aria-label="Следующее изображение"
+            :aria-label="ui.nextImageLabel"
             @click="go(1)"
           >
             <svg
@@ -124,6 +124,8 @@ const emit = defineEmits<{
   prev: []
   next: []
 }>()
+
+const { ui } = useGlobalSettings()
 
 const SWIPE_THRESHOLD = 50
 const EASING = 'cubic-bezier(0.2, 1, 0.3, 1)'

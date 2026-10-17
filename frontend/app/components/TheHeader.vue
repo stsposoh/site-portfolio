@@ -45,6 +45,8 @@ watch(
       <div class="header__text">
         {{ globalSettings?.headerPosition }}
       </div>
+
+      <TheLangSwitcher class="header__lang" />
     </div>
   </header>
 </template>
@@ -52,10 +54,11 @@ watch(
 <style lang="scss">
 .header {
   position: fixed;
-  z-index: 4;
+  z-index: 13;
   left: 0;
   right: 0;
   top: 0;
+  pointer-events: none;
 
   &__inner {
     max-width: 110rem;
@@ -76,7 +79,8 @@ watch(
         visibility: visible;
       }
 
-      .header__text {
+      .header__text,
+      .header__lang {
         opacity: 1;
       }
     }
@@ -95,13 +99,28 @@ watch(
   }
 
   &__text {
+    order: 1;
+    flex-basis: 100%;
     opacity: 0;
     font-size: 1.4rem;
     font-weight: 400;
 
+    @include m.min-width(sm) {
+      order: 0;
+      flex-basis: auto;
+    }
+
     @include m.max-width(sm) {
       font-size: 1.2rem;
     }
+  }
+
+  &__lang {
+    align-self: center;
+    margin-left: auto;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity 0.6s 0.3s;
   }
 
   &__text .char {

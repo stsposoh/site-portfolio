@@ -25,12 +25,14 @@ export interface Certificate {
 export function useCertificates() {
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl as string
+  const { locale } = useI18n()
 
   const { data: response, ...rest } = useFetch<StrapiCertificatesResponse>(
     `${apiUrl}/api/certificates`,
     {
-      key: 'certificates',
+      key: computed(() => `certificates-${locale.value}`),
       query: {
+        locale,
         'populate[image][fields]': ['url', 'width', 'height', 'formats', 'alternativeText'],
         'populate[category][fields]': ['name'],
         'pagination[pageSize]': 100,

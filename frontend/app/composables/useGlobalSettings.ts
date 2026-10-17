@@ -18,8 +18,21 @@ export interface GlobalSetting {
   description: string
   headerTitle: string
   headerPosition: string
-  backButtonLabel: string
   menu: GlobalSettingMenu
+  ui?: GlobalSettingUiLabels
+}
+
+/** Interface strings that are not tied to a particular section */
+export interface GlobalSettingUiLabels {
+  allLabel?: string
+  copyLabel?: string
+  copiedLabel?: string
+  closeLabel?: string
+  previousImageLabel?: string
+  nextImageLabel?: string
+  imageViewerLabel?: string
+  visitSiteLabel?: string
+  languageLabel?: string
 }
 
 /** Strapi single types return data in data property */
@@ -30,16 +43,22 @@ interface StrapiGlobalSettingResponse {
 export function useGlobalSettings() {
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl as string
+  const { locale } = useI18n()
 
   const { data: response, ...rest } = useFetch<StrapiGlobalSettingResponse>(
     `${apiUrl}/api/global-setting`,
-    { key: 'global-settings' }
+    {
+      key: computed(() => `global-settings-${locale.value}`),
+      query: { locale }
+    }
   )
 
   const data = computed(() => response.value?.data ?? null)
+  const ui = computed(() => data.value?.ui ?? {})
 
   return {
     data,
+    ui,
     ...rest
   }
 }

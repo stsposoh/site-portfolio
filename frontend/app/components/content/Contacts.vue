@@ -42,7 +42,7 @@
           type="button"
           class="contacts__copy"
           :class="{ '--copied': copiedId === contact.id }"
-          :aria-label="`Скопировать: ${contact.value}`"
+          :aria-label="`${ui.copyLabel}: ${contact.value}`"
           @click="copy(contact)"
         >
           <svg
@@ -75,7 +75,7 @@
             <path d="M5 15V5a2 2 0 0 1 2-2h10" />
           </svg>
           <span class="contacts__copy-tooltip" role="status">
-            {{ copiedId === contact.id ? 'Скопировано' : '' }}
+            {{ copiedId === contact.id ? ui.copiedLabel : '' }}
           </span>
         </button>
       </li>
@@ -89,6 +89,7 @@ import type { ContactItem } from '~/composables/useContacts'
 const COPIED_TIMEOUT = 1600
 
 const { contacts } = useContacts()
+const { ui } = useGlobalSettings()
 const isActive = useSectionActive()
 
 const copiedId = ref<number | null>(null)

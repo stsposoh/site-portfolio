@@ -15,9 +15,10 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
+    "@nuxtjs/i18n": "^10.6.0",
     "animejs": "^3.2.2",
     "modern-normalize": "^3.0.1",
-    "nuxt": "^3.14.1592",
+    "nuxt": "^3.21.11",
     "nuxt-strapi-blocks-renderer": "^1.1.2",
     "split-type": "^0.3.4"
   },

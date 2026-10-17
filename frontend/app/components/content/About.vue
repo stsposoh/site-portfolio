@@ -119,11 +119,12 @@
 
 <script lang="ts" setup>
 import anime from 'animejs'
-import { pluralWord } from '~/utils/pluralize'
+import { pluralForm } from '~/utils/pluralize'
 import { prefersReducedMotion } from '~/utils/motion'
 import { applyTilt, resetTilt } from '~/utils/tilt'
 
 const { aboutBlock } = useLandingPage()
+const { locale } = useI18n()
 const { experienceText, experienceYears } = useExperience()
 const { certificates } = useCertificates()
 const { projects } = useProjects()
@@ -138,28 +139,29 @@ const contentNodes = computed(() => {
   return Array.isArray(content) ? content : []
 })
 
-const stats = computed(() => [
-  {
-    value: experienceYears.value,
-    suffix: '+',
-    label: `${pluralWord(experienceYears.value, ['год', 'года', 'лет'])} опыта`,
-    title: experienceText.value
-  },
-  {
-    value: projects.value.length,
-    suffix: '',
-    label: `${pluralWord(projects.value.length, ['проект', 'проекта', 'проектов'])} в портфолио`
-  },
-  {
-    value: certificates.value.length,
-    suffix: '',
-    label: pluralWord(certificates.value.length, [
-      'сертификат',
-      'сертификата',
-      'сертификатов'
-    ])
-  }
-])
+const stats = computed(() => {
+  const label = (n: number, forms?: string) =>
+    pluralForm(n, forms ?? '', locale.value)
+
+  return [
+    {
+      value: experienceYears.value,
+      suffix: '+',
+      label: label(experienceYears.value, aboutBlock.value?.experienceLabel),
+      title: experienceText.value
+    },
+    {
+      value: projects.value.length,
+      suffix: '',
+      label: label(projects.value.length, aboutBlock.value?.projectsLabel)
+    },
+    {
+      value: certificates.value.length,
+      suffix: '',
+      label: label(certificates.value.length, aboutBlock.value?.certificatesLabel)
+    }
+  ]
+})
 
 const REVEAL_TARGETS =
   '[data-reveal], [data-reveal-pill], [data-reveal-event], .about__timeline-line'

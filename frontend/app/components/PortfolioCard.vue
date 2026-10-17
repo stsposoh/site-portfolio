@@ -30,7 +30,7 @@
           target="_blank"
           rel="noopener noreferrer"
           class="portfolio-card__link"
-          :aria-label="`Перейти на сайт ${title}`"
+          :aria-label="`${ui.visitSiteLabel} ${title}`"
         >
           <svg
             width="18"
@@ -87,6 +87,8 @@ const props = defineProps<{
 const emit = defineEmits<{
   open: [rect: DOMRect]
 }>()
+
+const { ui } = useGlobalSettings()
 
 const PREVIEW_RATIO = 10 / 16
 

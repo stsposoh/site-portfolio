@@ -50,9 +50,8 @@
 </template>
 
 <script lang="ts" setup>
-const ALL_LABEL = 'Все'
-
 const { projects, technologies } = useProjects()
+const { ui } = useGlobalSettings()
 const isActive = useSectionActive()
 const { elements, register, capture, pin } = useLeavePinning<number>()
 
@@ -64,7 +63,7 @@ const viewerOrigin = ref<DOMRect | null>(null)
 const revealCount = ref(0)
 
 const tabs = computed(() => [
-  { label: ALL_LABEL, count: projects.value.length },
+  { label: ui.value.allLabel ?? '', count: projects.value.length },
   ...technologies.value.map(({ name, count }) => ({ label: name, count }))
 ])
 

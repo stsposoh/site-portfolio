@@ -25,12 +25,16 @@ export interface ContactItem {
 export function useContacts() {
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl as string
+  const { locale } = useI18n()
 
   const { data: response, ...rest } = useFetch<StrapiContactsResponse>(
     `${apiUrl}/api/contact`,
     {
-      key: 'contacts',
-      query: { 'populate[items][populate][icon][fields]': ['url'] }
+      key: computed(() => `contacts-${locale.value}`),
+      query: {
+        locale,
+        'populate[items][populate][icon][fields]': ['url']
+      }
     }
   )
 

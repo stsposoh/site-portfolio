@@ -15,7 +15,22 @@ export default defineNuxtConfig({
     enabled: true
   },
 
-  modules: ['nuxt-strapi-blocks-renderer'],
+  modules: ['nuxt-strapi-blocks-renderer', '@nuxtjs/i18n'],
+
+  i18n: {
+    strategy: 'prefix_except_default',
+    defaultLocale: 'uk',
+    locales: [
+      { code: 'uk', language: 'uk-UA', name: 'Українська' },
+      { code: 'en', language: 'en-US', name: 'English' },
+      { code: 'ru', language: 'ru-RU', name: 'Русский' }
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root'
+    }
+  },
 
   css: ['@/assets/scss/main.scss'],
 

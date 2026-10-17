@@ -50,8 +50,9 @@ function moveIndicator() {
 }
 
 watch(
-  () => props.modelValue,
-  () => nextTick(moveIndicator)
+  () => [props.modelValue, props.tabs],
+  () => nextTick(moveIndicator),
+  { deep: true }
 )
 
 watch(isActive, (active) => {

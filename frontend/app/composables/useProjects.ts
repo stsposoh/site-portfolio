@@ -36,12 +36,14 @@ export interface Project {
 export function useProjects() {
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl as string
+  const { locale } = useI18n()
 
   const { data: response, ...rest } = useFetch<StrapiProjectsResponse>(
     `${apiUrl}/api/projects`,
     {
-      key: 'projects',
+      key: computed(() => `projects-${locale.value}`),
       query: {
+        locale,
         'populate[screenshot][fields]': ['url', 'width', 'height', 'formats'],
         'populate[technologies][fields]': ['name'],
         'populate[technologies][populate][icon][fields]': ['url'],

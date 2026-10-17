@@ -50,6 +50,10 @@ export interface LandingPageAboutBlock {
   stackItems?: LandingPageStackItem[]
   infoCards?: LandingPageInfoCard[]
   heading: LandingPageSectionHeading
+  /** Plural forms separated by "|", in Intl.PluralRules category order */
+  experienceLabel?: string
+  projectsLabel?: string
+  certificatesLabel?: string
 }
 
 /** Skill item from shared.skill */
@@ -80,6 +84,9 @@ export interface LandingPageSkillsBlock {
 export interface LandingPage {
   id: number
   blocks?: (LandingPageAboutBlock | LandingPageSkillsBlock)[]
+  certificatesHeading?: LandingPageSectionHeading
+  portfolioHeading?: LandingPageSectionHeading
+  contactsHeading?: LandingPageSectionHeading
 }
 
 interface StrapiLandingPageResponse {
@@ -89,10 +96,14 @@ interface StrapiLandingPageResponse {
 export function useLandingPage() {
   const config = useRuntimeConfig()
   const apiUrl = config.public.apiUrl as string
+  const { locale } = useI18n()
 
   const { data: response, ...rest } = useFetch<StrapiLandingPageResponse>(
     `${apiUrl}/api/landing-page`,
-    { key: 'landing-page' }
+    {
+      key: computed(() => `landing-page-${locale.value}`),
+      query: { locale }
+    }
   )
 
   const data = computed(() => response.value?.data ?? null)
@@ -149,10 +160,20 @@ export function useLandingPage() {
     }
   })
 
+  const withHeadingImage = (heading: LandingPageSectionHeading | undefined) =>
+    heading ? { ...heading, image: withFullImageUrl(heading.image) } : undefined
+
+  const sectionHeadings = computed(() => ({
+    certificates: withHeadingImage(data.value?.certificatesHeading),
+    portfolio: withHeadingImage(data.value?.portfolioHeading),
+    contacts: withHeadingImage(data.value?.contactsHeading)
+  }))
+
   return {
     data,
     aboutBlock,
     skillsBlock,
+    sectionHeadings,
     ...rest
   }
 }

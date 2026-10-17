@@ -3,7 +3,7 @@
     <button
       class="content-section__close"
       type="button"
-      aria-label="Close"
+      :aria-label="ui.closeLabel"
       @click="$emit('close')"
     >
       <svg
@@ -57,6 +57,8 @@ const props = defineProps<{
   active?: boolean
 }>()
 
+const { ui } = useGlobalSettings()
+
 provide(SECTION_ACTIVE_KEY, toRef(props, 'active'))
 
 defineEmits<{
@@ -67,12 +69,12 @@ defineEmits<{
 <style lang="scss">
 .content-section {
   position: absolute;
-  top: 50%;
+  top: 7.2rem;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   width: calc(100% - 3.2rem);
   max-width: 120rem;
-  max-height: 88vh;
+  max-height: calc(100dvh - 8.8rem);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -87,6 +89,12 @@ defineEmits<{
   box-shadow:
     0 3rem 8rem rgba(0, 0, 0, 0.35),
     inset 0 0.1rem 0 rgba(255, 255, 255, 0.12);
+
+  @include m.min-width(sm) {
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-height: 88vh;
+  }
 
   &.--purple {
     --accent: #c9a7ff;

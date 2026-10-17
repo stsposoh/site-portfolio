@@ -145,6 +145,9 @@ export function useBlobMenu(slugs: Ref<string[]>) {
   const openedIndex = ref<number | null>(null)
   const introSkipped = ref(false)
 
+  const route = useRoute()
+  const router = useRouter()
+
   const reducedMotion = prefersReducedMotion()
   const duration = (ms: number) => (reducedMotion ? 1 : ms)
 
@@ -197,7 +200,7 @@ export function useBlobMenu(slugs: Ref<string[]>) {
     slugs.value[index] || `section-${index + 1}`
 
   const sectionIndexFromHash = () => {
-    const key = decodeURIComponent(window.location.hash.slice(1))
+    const key = decodeURIComponent(route.hash.slice(1))
     if (!key) return -1
     return blobs.findIndex((_, index) => sectionKey(index) === key)
   }
@@ -328,25 +331,22 @@ export function useBlobMenu(slugs: Ref<string[]>) {
 
   function openSection(index: number): void {
     if (isBusy || isOpen.value) return
-    history.pushState({ section: index }, '', `#${sectionKey(index)}`)
     open(index)
+    router.push({ hash: `#${sectionKey(index)}` })
   }
 
   function requestClose(): void {
     if (isBusy || !isOpen.value) return
 
-    // Our own history entry: step back so Back/Forward stay meaningful
-    if (history.state?.section !== undefined) {
-      history.back()
+    // The section was opened from this page: step back so Back/Forward stay meaningful
+    const pageWithoutHash = route.fullPath.replace(route.hash, '')
+    if (window.history.state?.back === pageWithoutHash) {
+      router.back()
       return
     }
 
-    history.replaceState(
-      null,
-      '',
-      window.location.pathname + window.location.search
-    )
     close()
+    router.replace({ hash: '' })
   }
 
   const onKeydown = (event: KeyboardEvent) => {
@@ -371,7 +371,6 @@ export function useBlobMenu(slugs: Ref<string[]>) {
     )
 
     window.addEventListener('keydown', onKeydown)
-    window.addEventListener('popstate', syncWithLocation)
     contentEl.addEventListener('click', onBackdropClick)
 
     if (!reducedMotion) {
@@ -390,11 +389,12 @@ export function useBlobMenu(slugs: Ref<string[]>) {
     }
   })
 
+  watch(() => route.hash, syncWithLocation)
+
   onBeforeUnmount(() => {
     cancelAnimationFrame(frame)
     window.removeEventListener('pointermove', onPointerMove)
     window.removeEventListener('keydown', onKeydown)
-    window.removeEventListener('popstate', syncWithLocation)
     contentEl?.removeEventListener('click', onBackdropClick)
   })
 
