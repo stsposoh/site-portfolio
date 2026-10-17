@@ -70,6 +70,9 @@ $RECYCLE.BIN/
 *.sql
 *.sqlite
 *.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
 
 
 ############################
@@ -80,8 +83,6 @@ $RECYCLE.BIN/
 ssl
 .idea
 nbproject
-public/uploads/*
-!public/uploads/.gitkeep
 .tsbuildinfo
 .eslintcache
 
