@@ -1,0 +1,24 @@
+{
+  "kind": "collectionType",
+  "collectionName": "certificate_categories",
+  "info": {
+    "singularName": "certificate-category",
+    "pluralName": "certificate-categories",
+    "displayName": "Certificate Category"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "certificates": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::certificate.certificate",
+      "mappedBy": "category"
+    }
+  }
+}
