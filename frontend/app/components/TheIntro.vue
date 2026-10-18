@@ -13,6 +13,8 @@ const emit = defineEmits<{
   land: []
 }>()
 
+const SIDE_GAP = 16
+
 const titleEl = ref<HTMLElement | null>(null)
 const isReady = ref(false)
 
@@ -27,6 +29,10 @@ onMounted(async () => {
     emit('land')
     return
   }
+
+  const maxWidth = window.innerWidth - 2 * SIDE_GAP
+  const { width } = el.getBoundingClientRect()
+  if (width > maxWidth) el.style.fontSize = `${(fontSize(el) * maxWidth) / width}px`
 
   const { chars } = new SplitType(el, { types: 'chars' })
   isReady.value = true
