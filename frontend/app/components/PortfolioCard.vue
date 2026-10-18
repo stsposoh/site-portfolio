@@ -1,11 +1,12 @@
 <template>
   <article class="portfolio-card" :style="{ '--scroll-duration': scrollDuration }">
     <div ref="previewEl" class="portfolio-card__preview">
+      <!-- rem in sizes resolves against 16px, not the root font size -->
       <img
         class="portfolio-card__img"
         :src="src"
         :srcset="srcset"
-        sizes="(min-width: 1024px) 36rem, (min-width: 480px) 45vw, 90vw"
+        sizes="(min-width: 1024px) 368px, (min-width: 480px) 45vw, 85vw"
         alt=""
         :width="width"
         :height="height"

@@ -6,11 +6,12 @@
     @pointermove="applyTilt($event, 12)"
     @pointerleave="resetTilt"
   >
+    <!-- rem in sizes resolves against 16px, not the root font size -->
     <img
       class="certificate__img"
       :src="src"
       :srcset="srcset"
-      sizes="(min-width: 1280px) 22rem, (min-width: 768px) 30vw, 50vw"
+      sizes="(min-width: 1280px) 216px, (min-width: 768px) 30vw, 44vw"
       :alt="alt"
       :width="width"
       :height="height"
