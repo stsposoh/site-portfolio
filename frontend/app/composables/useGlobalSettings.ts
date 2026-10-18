@@ -41,16 +41,9 @@ interface StrapiGlobalSettingResponse {
 }
 
 export function useGlobalSettings() {
-  const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl as string
-  const { locale } = useI18n()
-
-  const { data: response, ...rest } = useFetch<StrapiGlobalSettingResponse>(
-    `${apiUrl}/api/global-setting`,
-    {
-      key: computed(() => `global-settings-${locale.value}`),
-      query: { locale }
-    }
+  const { data: response, ...rest } = useStrapiFetch<StrapiGlobalSettingResponse>(
+    'global-settings',
+    '/api/global-setting'
   )
 
   const data = computed(() => response.value?.data ?? null)

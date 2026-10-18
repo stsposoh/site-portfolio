@@ -1,9 +1,15 @@
+const apiUrl = process.env.NUXT_PUBLIC_API_URL || 'http://localhost:1337'
+const siteUrl = 'https://posokhov.com'
+
 export default defineNuxtConfig({
   compatibilityDate: '2026-02-15',
 
   runtimeConfig: {
     public: {
-      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:1337'
+      apiUrl,
+      // Empty for the static build, where uploads are copied next to the pages
+      mediaUrl: process.env.NUXT_PUBLIC_MEDIA_URL ?? apiUrl,
+      siteUrl
     }
   },
 

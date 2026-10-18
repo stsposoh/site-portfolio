@@ -24,17 +24,13 @@ export interface ContactItem {
 
 export function useContacts() {
   const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl as string
-  const { locale } = useI18n()
+  const mediaUrl = config.public.mediaUrl as string
 
-  const { data: response, ...rest } = useFetch<StrapiContactsResponse>(
-    `${apiUrl}/api/contact`,
+  const { data: response, ...rest } = useStrapiFetch<StrapiContactsResponse>(
+    'contacts',
+    '/api/contact',
     {
-      key: computed(() => `contacts-${locale.value}`),
-      query: {
-        locale,
-        'populate[items][populate][icon][fields]': ['url']
-      }
+      'populate[items][populate][icon][fields]': ['url']
     }
   )
 
@@ -48,7 +44,7 @@ export function useContacts() {
         value: item.value ?? '',
         url: item.url ?? '',
         copyable: Boolean(item.copyable),
-        icon: item.icon ? `${apiUrl}${item.icon.url}` : undefined
+        icon: item.icon ? `${mediaUrl}${item.icon.url}` : undefined
       }))
   )
 

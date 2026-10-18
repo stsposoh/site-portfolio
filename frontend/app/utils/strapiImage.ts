@@ -10,9 +10,9 @@ export interface StrapiImage extends StrapiImageFormat {
 }
 
 /** Absolute srcset over the original image and all its generated formats */
-export function buildSrcset(apiUrl: string, image: StrapiImage): string {
+export function buildSrcset(mediaUrl: string, image: StrapiImage): string {
   return [...Object.values(image.formats ?? {}), image]
     .sort((a, b) => a.width - b.width)
-    .map((source) => `${apiUrl}${source.url} ${source.width}w`)
+    .map((source) => `${mediaUrl}${source.url} ${source.width}w`)
     .join(', ')
 }

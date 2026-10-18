@@ -35,21 +35,17 @@ export interface Project {
 
 export function useProjects() {
   const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl as string
-  const { locale } = useI18n()
+  const mediaUrl = config.public.mediaUrl as string
 
-  const { data: response, ...rest } = useFetch<StrapiProjectsResponse>(
-    `${apiUrl}/api/projects`,
+  const { data: response, ...rest } = useStrapiFetch<StrapiProjectsResponse>(
+    'projects',
+    '/api/projects',
     {
-      key: computed(() => `projects-${locale.value}`),
-      query: {
-        locale,
-        'populate[screenshot][fields]': ['url', 'width', 'height', 'formats'],
-        'populate[technologies][fields]': ['name'],
-        'populate[technologies][populate][icon][fields]': ['url'],
-        'pagination[pageSize]': 100,
-        sort: ['featured:desc', 'date:desc', 'id:asc']
-      }
+      'populate[screenshot][fields]': ['url', 'width', 'height', 'formats'],
+      'populate[technologies][fields]': ['name'],
+      'populate[technologies][populate][icon][fields]': ['url'],
+      'pagination[pageSize]': 100,
+      sort: ['featured:desc', 'date:desc', 'id:asc']
     }
   )
 
@@ -59,13 +55,13 @@ export function useProjects() {
       title: project.title,
       description: project.description ?? '',
       link: project.link ?? '',
-      src: `${apiUrl}${project.screenshot.url}`,
-      srcset: buildSrcset(apiUrl, project.screenshot),
+      src: `${mediaUrl}${project.screenshot.url}`,
+      srcset: buildSrcset(mediaUrl, project.screenshot),
       width: project.screenshot.width,
       height: project.screenshot.height,
       technologies: (project.technologies ?? []).map(({ name, icon }) => ({
         name,
-        icon: icon ? `${apiUrl}${icon.url}` : undefined
+        icon: icon ? `${mediaUrl}${icon.url}` : undefined
       }))
     }))
   )
@@ -74,9 +70,7 @@ export function useProjects() {
   const technologies = computed(() => {
     const counts = new Map<string, number>()
     projects.value.forEach((project) =>
-      project.technologies.forEach(({ name }) =>
-        counts.set(name, (counts.get(name) ?? 0) + 1)
-      )
+      project.technologies.forEach(({ name }) => counts.set(name, (counts.get(name) ?? 0) + 1))
     )
     return [...counts.entries()]
       .sort((a, b) => b[1] - a[1])

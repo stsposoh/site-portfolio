@@ -24,20 +24,16 @@ export interface Certificate {
 
 export function useCertificates() {
   const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl as string
-  const { locale } = useI18n()
+  const mediaUrl = config.public.mediaUrl as string
 
-  const { data: response, ...rest } = useFetch<StrapiCertificatesResponse>(
-    `${apiUrl}/api/certificates`,
+  const { data: response, ...rest } = useStrapiFetch<StrapiCertificatesResponse>(
+    'certificates',
+    '/api/certificates',
     {
-      key: computed(() => `certificates-${locale.value}`),
-      query: {
-        locale,
-        'populate[image][fields]': ['url', 'width', 'height', 'formats', 'alternativeText'],
-        'populate[category][fields]': ['name'],
-        'pagination[pageSize]': 100,
-        sort: ['date:desc', 'id']
-      }
+      'populate[image][fields]': ['url', 'width', 'height', 'formats', 'alternativeText'],
+      'populate[category][fields]': ['name'],
+      'pagination[pageSize]': 100,
+      sort: ['date:desc', 'id']
     }
   )
 
@@ -46,8 +42,8 @@ export function useCertificates() {
       id,
       category: category?.name ?? '',
       alt: image.alternativeText ?? '',
-      src: `${apiUrl}${image.url}`,
-      srcset: buildSrcset(apiUrl, image),
+      src: `${mediaUrl}${image.url}`,
+      srcset: buildSrcset(mediaUrl, image),
       width: image.width,
       height: image.height
     }))

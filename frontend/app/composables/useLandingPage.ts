@@ -97,35 +97,29 @@ interface StrapiLandingPageResponse {
 
 export function useLandingPage() {
   const config = useRuntimeConfig()
-  const apiUrl = config.public.apiUrl as string
-  const { locale } = useI18n()
+  const mediaUrl = config.public.mediaUrl as string
 
-  const { data: response, ...rest } = useFetch<StrapiLandingPageResponse>(
-    `${apiUrl}/api/landing-page`,
-    {
-      key: computed(() => `landing-page-${locale.value}`),
-      query: { locale }
-    }
+  const { data: response, ...rest } = useStrapiFetch<StrapiLandingPageResponse>(
+    'landing-page',
+    '/api/landing-page'
   )
 
   const data = computed(() => response.value?.data ?? null)
 
   const withFullImageUrl = (img: { url: string; alternativeText?: string } | undefined) => {
     if (!img?.url) return undefined
-    return { ...img, url: `${apiUrl}${img.url}` }
+    return { ...img, url: `${mediaUrl}${img.url}` }
   }
 
   const aboutBlock = computed(() => {
     const blocks = data.value?.blocks ?? []
-    const block = blocks.find(
-      (b): b is LandingPageAboutBlock => b.__component === 'blocks.about'
-    )
+    const block = blocks.find((b): b is LandingPageAboutBlock => b.__component === 'blocks.about')
     if (!block) return null
 
     const headingImage = withFullImageUrl(block.heading?.image)
     const infoCards = block.infoCards?.map((card) => ({
       ...card,
-      image: card.image ? { ...card.image, url: `${apiUrl}${card.image.url}` } : undefined
+      image: card.image ? { ...card.image, url: `${mediaUrl}${card.image.url}` } : undefined
     }))
 
     return {
@@ -139,9 +133,7 @@ export function useLandingPage() {
 
   const skillsBlock = computed(() => {
     const blocks = data.value?.blocks ?? []
-    const block = blocks.find(
-      (b): b is LandingPageSkillsBlock => b.__component === 'blocks.skills'
-    )
+    const block = blocks.find((b): b is LandingPageSkillsBlock => b.__component === 'blocks.skills')
     if (!block) return null
 
     const headingImage = withFullImageUrl(block.heading?.image)
@@ -149,7 +141,7 @@ export function useLandingPage() {
       ...skillBlock,
       skills: skillBlock.skills?.map((skill) => ({
         ...skill,
-        icon: skill.icon ? { ...skill.icon, url: `${apiUrl}${skill.icon.url}` } : undefined
+        icon: skill.icon ? { ...skill.icon, url: `${mediaUrl}${skill.icon.url}` } : undefined
       }))
     }))
 
