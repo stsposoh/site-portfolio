@@ -1,6 +1,7 @@
 <template>
-  <div class="content-section" :class="`--${color}`">
+  <div class="content-section" :class="`--${color}`" :inert="!active">
     <button
+      ref="closeButton"
       class="content-section__close"
       type="button"
       :aria-label="ui.closeLabel"
@@ -60,6 +61,15 @@ const props = defineProps<{
 const { ui } = useGlobalSettings()
 
 provide(SECTION_ACTIVE_KEY, toRef(props, 'active'))
+
+const closeButton = ref<HTMLButtonElement>()
+
+watch(
+  () => props.active,
+  (active) => {
+    if (active) nextTick(() => closeButton.value?.focus({ preventScroll: true }))
+  }
+)
 
 defineEmits<{
   close: []

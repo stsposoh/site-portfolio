@@ -34,9 +34,25 @@ function showMenuItems() {
   timers.push(setTimeout(() => (showDecoration.value = true), 700))
 }
 
+const links: HTMLAnchorElement[] = []
+let selectedIndex: number | null = null
+
+function select(index: number) {
+  selectedIndex = index
+  emit('select', index)
+}
+
 watch(
   () => props.hidden,
-  (hidden) => (hidden ? hideMenuItems() : showMenuItems())
+  (hidden) => {
+    if (hidden) return hideMenuItems()
+    showMenuItems()
+
+    // Focus was inside the closed section, which is inert now
+    if (selectedIndex !== null && document.activeElement === document.body) {
+      nextTick(() => links[selectedIndex!]?.focus({ preventScroll: true }))
+    }
+  }
 )
 
 watch(navItems, (items) => {
@@ -51,7 +67,7 @@ onBeforeUnmount(hideMenuItems)
 </script>
 
 <template>
-  <nav class="main-menu" :class="{ '--hidden': hidden }">
+  <nav class="main-menu" :class="{ '--hidden': hidden }" :inert="hidden">
     <div
       v-for="(item, index) in navItems"
       :key="item.id"
@@ -63,6 +79,7 @@ onBeforeUnmount(hideMenuItems)
       }"
     >
       <a
+        :ref="(el) => (links[index] = el as HTMLAnchorElement)"
         href="#"
         class="main-menu__link"
         :class="{ '--decorated': showDecoration }"
@@ -70,7 +87,7 @@ onBeforeUnmount(hideMenuItems)
         @mouseleave="emit('hover', null)"
         @focus="emit('hover', index)"
         @blur="emit('hover', null)"
-        @click.prevent="emit('select', index)"
+        @click.prevent="select(index)"
         >{{ item.label }}</a
       >
     </div>

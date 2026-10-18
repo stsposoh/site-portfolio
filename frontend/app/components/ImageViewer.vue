@@ -144,7 +144,29 @@ function go(direction: -1 | 1) {
   else emit('next')
 }
 
+let returnFocusTo: HTMLElement | null = null
+
+/** Keeps Tab cycling through the viewer's own buttons */
+function trapFocus(e: KeyboardEvent) {
+  const buttons = Array.from(
+    document.querySelectorAll<HTMLElement>('.image-viewer__button')
+  )
+  const first = buttons[0]
+  const last = buttons[buttons.length - 1]
+  if (!first || !last) return
+
+  const outside = !buttons.includes(document.activeElement as HTMLElement)
+  if (e.shiftKey && (outside || document.activeElement === first)) {
+    e.preventDefault()
+    last.focus()
+  } else if (!e.shiftKey && (outside || document.activeElement === last)) {
+    e.preventDefault()
+    first.focus()
+  }
+}
+
 function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Tab') trapFocus(e)
   if (e.key === 'ArrowLeft') go(-1)
   if (e.key === 'ArrowRight') go(1)
   if (e.key !== 'Escape') return
@@ -275,9 +297,17 @@ watch(
     if (open) {
       document.body.style.overflow = 'hidden'
       document.addEventListener('keydown', onKeydown)
+      returnFocusTo = document.activeElement as HTMLElement | null
+      nextTick(() =>
+        document
+          .querySelector<HTMLElement>('.image-viewer__button.--close')
+          ?.focus({ preventScroll: true })
+      )
     } else {
       document.body.style.overflow = ''
       document.removeEventListener('keydown', onKeydown)
+      returnFocusTo?.focus({ preventScroll: true })
+      returnFocusTo = null
     }
   },
   { immediate: true }
