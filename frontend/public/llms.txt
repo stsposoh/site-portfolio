@@ -1,0 +1,18 @@
+# Stan Posokhov
+
+> Front-end developer from Ukraine, building websites since 2016. Main stack: Vue 3, Nuxt 3, WordPress. Uses AI tools as an assistant in day-to-day development.
+
+The site is a single page per language with sections: About, Skills, Certificates, Portfolio, Contacts. Sections open via URL hash, e.g. https://posokhov.com/en#portfolio.
+
+## Pages
+
+- [English](https://posokhov.com/en): about, skills, certificates, portfolio and contacts
+- [Українська](https://posokhov.com/): the same content in Ukrainian
+- [Русский](https://posokhov.com/ru): the same content in Russian
+
+## Contacts
+
+- Email: stsposoh@gmail.com
+- GitHub: https://github.com/stsposoh
+- LinkedIn: https://www.linkedin.com/in/sposokhov
+- Telegram: https://t.me/posohov

@@ -103,14 +103,50 @@ const {
 } = useBlobMenu(sectionSlugs)
 const introLanded = ref(false)
 const introDone = computed(() => introLanded.value || introSkipped.value)
-const { skillsBlock, sectionHeadings } = useLandingPage()
+const { aboutBlock, skillsBlock, sectionHeadings } = useLandingPage()
 
 const skillsHeading = computed(() => skillsBlock.value?.heading)
 
+const { siteUrl } = useRuntimeConfig().public
+const ogImage = computed(() => {
+  const url = aboutBlock.value?.heading?.image?.url
+  return url ? new URL(url, siteUrl as string).href : undefined
+})
+
 useSeoMeta({
   title: () => globalSettings.value?.title,
-  description: () => globalSettings.value?.description
+  description: () => globalSettings.value?.description,
+  ogType: 'website',
+  ogTitle: () => globalSettings.value?.title,
+  ogDescription: () => globalSettings.value?.description,
+  ogImage,
+  twitterCard: 'summary'
 })
+
+const { contacts } = useContacts()
+
+useHead(() => ({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: globalSettings.value?.title,
+        jobTitle: globalSettings.value?.headerPosition,
+        description: globalSettings.value?.description,
+        url: siteUrl,
+        image: ogImage.value,
+        email: contacts.value
+          .find(({ url }) => url.startsWith('mailto:'))
+          ?.url.replace('mailto:', ''),
+        sameAs: contacts.value
+          .map(({ url }) => url)
+          .filter((url) => url.startsWith('https://'))
+      })
+    }
+  ]
+}))
 </script>
 
 <style lang="scss">

@@ -21,21 +21,29 @@ export default defineNuxtConfig({
     enabled: true
   },
 
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
+        { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' }
+      ],
+      meta: [{ name: 'theme-color', content: '#000000' }]
+    }
+  },
+
   modules: ['nuxt-strapi-blocks-renderer', '@nuxtjs/i18n'],
 
   i18n: {
     strategy: 'prefix_except_default',
+    baseUrl: siteUrl,
     defaultLocale: 'uk',
     locales: [
       { code: 'uk', language: 'uk-UA', name: 'Українська' },
       { code: 'en', language: 'en-US', name: 'English' },
       { code: 'ru', language: 'ru-RU', name: 'Русский' }
     ],
-    detectBrowserLanguage: {
-      useCookie: true,
-      cookieKey: 'i18n_redirected',
-      redirectOn: 'root'
-    }
+    detectBrowserLanguage: false
   },
 
   css: ['@/assets/scss/main.scss'],
