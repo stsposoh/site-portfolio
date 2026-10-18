@@ -48,7 +48,7 @@ export function useProjects() {
         'populate[technologies][fields]': ['name'],
         'populate[technologies][populate][icon][fields]': ['url'],
         'pagination[pageSize]': 100,
-        sort: ['featured:desc', 'id:asc']
+        sort: ['featured:desc', 'date:desc', 'id:asc']
       }
     }
   )

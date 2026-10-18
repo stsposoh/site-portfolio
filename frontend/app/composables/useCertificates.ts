@@ -36,7 +36,7 @@ export function useCertificates() {
         'populate[image][fields]': ['url', 'width', 'height', 'formats', 'alternativeText'],
         'populate[category][fields]': ['name'],
         'pagination[pageSize]': 100,
-        sort: 'id'
+        sort: ['date:desc', 'id']
       }
     }
   )
