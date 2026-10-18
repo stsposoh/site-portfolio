@@ -33,7 +33,10 @@
     "experienceLabel": {
       "type": "string"
     },
-    "projectsLabel": {
+    "sitesCount": {
+      "type": "integer"
+    },
+    "sitesLabel": {
       "type": "string"
     },
     "certificatesLabel": {

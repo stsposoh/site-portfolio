@@ -63,7 +63,8 @@
       </div>
 
       <div v-if="contentNodes.length" class="about__text" data-reveal>
-        <StrapiBlocksText :nodes="contentNodes" />
+        <!-- StrapiBlocksText reads nodes only once on setup -->
+        <StrapiBlocksText :key="aboutBlock?.id" :nodes="contentNodes" />
       </div>
 
       <div v-if="aboutBlock?.infoCards?.length" class="about__timeline">
@@ -127,7 +128,6 @@ const { aboutBlock } = useLandingPage()
 const { locale } = useI18n()
 const { experienceText, experienceYears } = useExperience()
 const { certificates } = useCertificates()
-const { projects } = useProjects()
 const isActive = useSectionActive()
 
 const rootEl = ref<HTMLElement | null>(null)
@@ -151,9 +151,9 @@ const stats = computed(() => {
       title: experienceText.value
     },
     {
-      value: projects.value.length,
-      suffix: '',
-      label: label(projects.value.length, aboutBlock.value?.projectsLabel)
+      value: aboutBlock.value?.sitesCount ?? 0,
+      suffix: '+',
+      label: label(aboutBlock.value?.sitesCount ?? 0, aboutBlock.value?.sitesLabel)
     },
     {
       value: certificates.value.length,
@@ -460,7 +460,7 @@ watch(isActive, (active) => (active ? reveal() : reset()))
     width: 3.6rem;
     height: 3.6rem;
     border-radius: 1rem;
-    object-fit: cover;
+    object-fit: contain;
   }
 
   &__event-years {

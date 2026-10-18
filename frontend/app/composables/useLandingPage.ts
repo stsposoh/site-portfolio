@@ -44,6 +44,7 @@ export interface LandingPageInfoCard {
 /** About block from landing page */
 export interface LandingPageAboutBlock {
   __component: 'blocks.about'
+  id: number
   shortText: string
   stackText: string
   content?: unknown
@@ -52,7 +53,8 @@ export interface LandingPageAboutBlock {
   heading: LandingPageSectionHeading
   /** Plural forms separated by "|", in Intl.PluralRules category order */
   experienceLabel?: string
-  projectsLabel?: string
+  sitesCount?: number
+  sitesLabel?: string
   certificatesLabel?: string
 }
 

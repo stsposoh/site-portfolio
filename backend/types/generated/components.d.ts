@@ -12,8 +12,9 @@ export interface BlocksAbout extends Struct.ComponentSchema {
     experienceLabel: Schema.Attribute.String;
     heading: Schema.Attribute.Component<'shared.section-heading', false>;
     infoCards: Schema.Attribute.Component<'shared.info-card', true>;
-    projectsLabel: Schema.Attribute.String;
     shortText: Schema.Attribute.String;
+    sitesCount: Schema.Attribute.Integer;
+    sitesLabel: Schema.Attribute.String;
     stackItems: Schema.Attribute.Component<'shared.text-items', true>;
     stackText: Schema.Attribute.String;
   };

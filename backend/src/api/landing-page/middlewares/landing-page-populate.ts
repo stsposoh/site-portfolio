@@ -18,7 +18,8 @@ const populate = {
           "stackText",
           "content",
           "experienceLabel",
-          "projectsLabel",
+          "sitesCount",
+          "sitesLabel",
           "certificatesLabel",
         ],
         populate: {
